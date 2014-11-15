@@ -15,27 +15,6 @@
 
 using namespace troen;
 
-osg::Vec3 rotate_point_xy(osg::Vec3& pivot, float angle, osg::Vec3 p)
-{
-	//if (angle * 57.295779513 > 90.0)
-	//	angle -= 1.5707963268;
-
-	float s = std::sin(angle);
-	float c = std::cos(angle);
-	std::cout << angle << " " << s << " " << c <<  std::endl;
-
-	// translate point back to origin:
-	p -= pivot;
-
-	//	x' = x \cos \theta - y \sin \theta\,,
-	//	y' = x \sin \theta + y \cos \theta\,.
-	// rotate point
-	float xnew = p.x() * c - p.y() * s;
-	float ynew = p.x() * s + p.y() * c;
-
-	// translate point back:
-	return osg::Vec3(osg::Vec2(xnew + pivot.x(), ynew + pivot.y()), p.z());
-}
 
 RouteView::RouteView(RouteController* routeController, osg::Vec3 color, std::shared_ptr<AbstractModel>& model) :
 AbstractView(),
@@ -74,7 +53,7 @@ void RouteView::initializeRoute()
 	// use the shared normal array.
 	// polyGeom->setNormalArray(shared_normals.get(), osg::Array::BIND_OVERALL);
 
-	m_drawArrays = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, 0, 0);
+	m_drawArrays = new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 0); 
 	m_geometry->addPrimitiveSet(m_drawArrays);
 
 	m_geode = new osg::Geode();
@@ -87,6 +66,7 @@ void RouteView::initializeRoute()
 	m_radarElementsGroup = new osg::Group();
 	m_radarElementsGroup->setNodeMask(CAMERA_MASK_NONE);
 	m_node->addChild(m_radarElementsGroup);
+
 
 }
 
@@ -107,20 +87,23 @@ void RouteView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
 
 void RouteView::initializeShader()
 {
-	osg::ref_ptr<osg::StateSet> NodeState = m_node->getOrCreateStateSet();
+	osg::ref_ptr<osg::StateSet> nodeState = m_node->getOrCreateStateSet();
 	
 	osg::Uniform* fenceColorU = new osg::Uniform("fenceColor", m_playerColor);
-	NodeState->addUniform(fenceColorU);
+	nodeState->addUniform(fenceColorU);
 
 	osg::Uniform* modelIDU = new osg::Uniform("modelID", GLOW);
-	NodeState->addUniform(modelIDU);
+	nodeState->addUniform(modelIDU);
 
 	m_fadeOutFactorUniform = new osg::Uniform("fadeOutFactor", 1.f);
-	NodeState->addUniform(m_fadeOutFactorUniform);
+	nodeState->addUniform(m_fadeOutFactorUniform);
 
-	NodeState->setMode(GL_BLEND, osg::StateAttribute::ON);
-	NodeState->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	NodeState->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::FENCE], osg::StateAttribute::ON);
+	m_playerPositionUniform = new osg::Uniform("playerPosition", osg::Vec3(0.0, 0.0, 0.0));
+	nodeState->addUniform(m_playerPositionUniform);
+
+	nodeState->setMode(GL_BLEND, osg::StateAttribute::ON);
+	nodeState->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	nodeState->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::FENCE], osg::StateAttribute::ON);
 
 	shaders::m_allShaderPrograms[shaders::FENCE]->addBindAttribLocation("a_relWidth", 5);
 }
@@ -157,31 +140,54 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 {
 
 
-	osg::Vec2 currentDirection = toVec2((currentPosition - lastPosition));
-	currentDirection.normalize();
+	osg::Vec2 ncurrentDirection = toVec2((currentPosition - lastPosition));
+	ncurrentDirection.normalize();
 
-	osg::Vec3 sideDirection = osg::Vec3(currentDirection, 0.0) ^ osg::Vec3(0.0, 0.0, 1.0);
+	osg::Vec3 sideDirection = osg::Vec3(ncurrentDirection, 0.0) ^ osg::Vec3(0.0, 0.0, 1.0);
 	sideDirection.normalize();
 	osg::Vec3 sideVec = sideDirection * (m_routeWidth / 2.f);
 
-	osg::Vec3 leftPoint = currentPosition + sideVec  + osg::Vec3(0.0,0.0,ROUTE_HOVER_HEIGHT);
-	osg::Vec3 rightPoint = currentPosition - sideVec + osg::Vec3(0.0, 0.0, ROUTE_HOVER_HEIGHT);
+	osg::Vec2 currentDirection = toVec2((currentPosition - lastPosition));
+
+	osg::Vec3 lP = currentPosition + sideVec  + osg::Vec3(0.0,0.0,0.1f);
+	osg::Vec3 rP = currentPosition - sideVec + osg::Vec3(0.0, 0.0, 0.1f);
+	osg::Vec3 lastlP = lastPosition + sideVec + osg::Vec3(0.0, 0.0, 0.1f);
+	osg::Vec3 lastrP = lastPosition - sideVec + osg::Vec3(0.0, 0.0, 0.1f);
+	osg::Vec3 up = osg::Vec3(0.0, 0.0, ROUTE_HOVER_HEIGHT);
+
+	osg::Vec3 cube[] = { lastlP, lastrP, rP, lP,
+		lastrP, lastrP + up, rP + up, rP,
+		lastlP, lastlP + up, lP + up, lP,
+		lastlP + up, lastrP + up, rP + up, lP + up };
+	float relWidths[] = { 
+		0.f, 1.f, 1.f, 0.f,
+		0.f, 1.f, 1.f, 0.f,
+		0.f, 1.f, 1.f, 0.f,
+		0.f, 1.f, 1.f, 0.f };
 
 	if (m_coordinates->size() == 0)
 	{
-		osg::Vec2 currentDirection = toVec2((currentPosition - lastPosition));
+		
 
-		m_coordinates->push_back(leftPoint - osg::Vec3(currentDirection,0.0));
-		m_coordinates->push_back(rightPoint - osg::Vec3(currentDirection, 0.0));
+		m_coordinates->push_back(lP - osg::Vec3(currentDirection,0.0));
+		m_coordinates->push_back(rP - osg::Vec3(currentDirection, 0.0));
+		m_coordinates->push_back(rP - osg::Vec3(currentDirection, ROUTE_HOVER_HEIGHT));
+		m_coordinates->push_back(lP - osg::Vec3(currentDirection, ROUTE_HOVER_HEIGHT));
 		m_relativeWidth->push_back(0.f);
 		m_relativeWidth->push_back(1.f);
+
 	}
 
 	// game fence part
-	m_coordinates->push_back(leftPoint);
-	m_coordinates->push_back(rightPoint);
-	m_relativeWidth->push_back(0.f);
-	m_relativeWidth->push_back(1.f);
+	//m_coordinates->push_back(lP);
+	//m_coordinates->push_back(rP);
+	for (osg::Vec3 v : cube)
+		m_coordinates->push_back(v);
+	for (float f : relWidths)
+		m_relativeWidth->push_back(f);
+
+	//m_relativeWidth->push_back(0.f);
+	//m_relativeWidth->push_back(1.f);
 
 
 	int currentFenceParts = (m_coordinates->size() - 2) / 2;
@@ -210,7 +216,7 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 	}
 
 	// limit
-	enforceFencePartsLimit();
+	//enforceFencePartsLimit();
 
 	//necessary for network fences, because of unpredictable timings
 	m_geometry->dirtyBound();

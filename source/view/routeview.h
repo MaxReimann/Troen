@@ -13,6 +13,7 @@ namespace troen
 {
 	class RouteView : public AbstractView
 	{
+		friend RouteController;
 	public:
 		RouteView(RouteController* fenceController, const osg::Vec3 color, std::shared_ptr<AbstractModel>& model);
 
@@ -27,7 +28,7 @@ namespace troen
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool val);
 		std::vector<osg::Vec3> subdivide(std::vector<osg::Vec3>& input, int level);
-	private:
+	protected:
 		void initializeRoute();
 		void initializeFenceGap();
 		void initializeShader();
@@ -42,6 +43,7 @@ namespace troen
 		std::weak_ptr<RouteModel>		m_model;
 
 		osg::Uniform*	m_fadeOutFactorUniform;
+		osg::Uniform* m_playerPositionUniform;
 
 		osg::Vec3 m_playerColor;
 		float m_routeWidth;
