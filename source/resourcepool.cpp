@@ -1,4 +1,4 @@
-#include "ResourcePool.h"
+#include "resourcepool.h"
 
 #include <osgDB/ReadFile>
 

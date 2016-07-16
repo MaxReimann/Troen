@@ -1,4 +1,4 @@
-#include "SkyDome.h"
+#include "skydome.h"
 
 #include "abstractview.h"
 

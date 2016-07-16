@@ -1,4 +1,4 @@
-#include "GameLogic.h"
+#include "gamelogic.h"
 // STD
 #include <array>
 #include <random>

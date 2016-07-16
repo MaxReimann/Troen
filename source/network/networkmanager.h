@@ -11,6 +11,7 @@
 #include <osg/Vec3>
 // Qt
 #include <QThread>
+#include <QMutex>
 #include <vector>
 #include "qcolor.h"
 

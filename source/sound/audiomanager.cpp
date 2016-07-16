@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#include "audiomanager.h"
 #include <math.h>
 #include <algorithm>
 #include <stdlib.h>
