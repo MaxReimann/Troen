@@ -20,6 +20,9 @@
 
 using namespace troen;
 
+#define mod(a, m) \
+	((a)-(m)* (static_cast<int>((a) / (m)) - ((a) < 0 ? 1 : 0)))
+
 HUDView::HUDView(const int i, const std::vector<std::shared_ptr<Player>>& players) :
 AbstractView(),
 m_trackNode(nullptr),

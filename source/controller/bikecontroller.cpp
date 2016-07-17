@@ -285,6 +285,10 @@ float BikeController::computeFovyDelta(float speed, float currentFovy)
 
 	const float fovyDampening = 20.f;
 	float fovyDelta = (newFovy - currentFovy) / fovyDampening * timeFactor;
+
+#define clamp(l, u, x) \
+	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
+
 	return clamp(-FOVY_DELTA_MAX, FOVY_DELTA_MAX, fovyDelta);
 }
 void BikeController::activateTurbo()

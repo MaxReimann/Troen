@@ -120,29 +120,29 @@ namespace troen
 // #define abs(v) \
 // 	(((v) < 0) ? -(v) : (v))
 
-#define sign(v) \
-	(((v) < 0) ? -1 : 1)
+// #define sign(v) \
+// 	(((v) < 0) ? -1 : 1)
 
-#define intcast(v) \
-	(static_cast<int>(v))
+// #define intcast(v) \
+// 	(static_cast<int>(v))
 
-#define shortcast(v) \
-	(static_cast<short>(v))
+// #define shortcast(v) \
+// 	(static_cast<short>(v))
 
-#define mod(a, m) \
-	((a)-(m)* (intcast((a) / (m)) - ((a) < 0 ? 1 : 0)))
+// #define mod(a, m) \
+// 	((a)-(m)* (intcast((a) / (m)) - ((a) < 0 ? 1 : 0)))
 
-#define frac(x) \
-	((x)-intcast(x))
+// #define frac(x) \
+// 	((x)-intcast(x))
 
-#define clamp(l, u, x) \
-	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
+// #define clamp(l, u, x) \
+// 	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
 
-#define deg(rad) \
-	((rad)* 180.0L / PI)
+// #define deg(rad) \
+// 	((rad)* 180.0L / PI)
 
-#define rad(deg) \
-	((deg)* PI / 180.0L)
+// #define rad(deg) \
+// 	((deg)* PI / 180.0L)
 
 #define mi(a, b) \
 	((a) < (b) ? (a) : (b))
@@ -150,66 +150,66 @@ namespace troen
 #define ma(a, b) \
 	((a) < (b) ? (b) : (a))
 
-// same as hour
-// note: if d is negative use -decimal(d, m, s) instead of decimal(-d, m, s)
-#define decimal(d, m, s) \
-	((d)+((m)+(s) / 60.0L) / 60.0L)
+// // same as hour
+// // note: if d is negative use -decimal(d, m, s) instead of decimal(-d, m, s)
+// #define decimal(d, m, s) \
+// 	((d)+((m)+(s) / 60.0L) / 60.0L)
 
-#define sind(deg) \
-	(sin(rad(deg)))
+// #define sind(deg) \
+// 	(sin(rad(deg)))
 
-#define cosd(deg) \
-	(cos(rad(deg)))
+// #define cosd(deg) \
+// 	(cos(rad(deg)))
 
-#define tand(deg) \
-	(tan(rad(deg)))
+// #define tand(deg) \
+// 	(tan(rad(deg)))
 
-#define asind(rad) \
-	(deg(asin(rad)))
+// #define asind(rad) \
+// 	(deg(asin(rad)))
 
-#define acosd(rad) \
-	(deg(acos(rad)))
+// #define acosd(rad) \
+// 	(deg(acos(rad)))
 
-#define atand(rad) \
-	(deg(atan(rad)))
+// #define atand(rad) \
+// 	(deg(atan(rad)))
 
-#define atan2d(x, y) \
-	(deg(atan2(x, y)))
+// #define atan2d(x, y) \
+// 	(deg(atan2(x, y)))
 
-#define adiameter(D, r) \
-	(2 * atan(r / D))
+// #define adiameter(D, r) \
+// 	(2 * atan(r / D))
 
-// normalizes an angle to between 0 and 2PI radians
-#define rev(rad) \
-	((rad)-floor((rad) / PI2) * PI2)
+// // normalizes an angle to between 0 and 2PI radians
+// #define rev(rad) \
+// 	((rad)-floor((rad) / PI2) * PI2)
 
-// normalizes an angle to between 0 and 360 degrees
-#define revd(deg) \
-	((deg)-floor((deg) / 360.0L) * 360.0L)
+// // normalizes an angle to between 0 and 360 degrees
+// #define revd(deg) \
+// 	((deg)-floor((deg) / 360.0L) * 360.0L)
 
-// cube root (e.g. needed for parabolic orbits)
-#define cbrt(x) \
-	(((x) > 0.0) ? exp(log(x) / 3.0L) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
+// // cube root (e.g. needed for parabolic orbits)
+// #define cbrt(x) \
+// 	(((x) > 0.0) ? exp(log(x) / 3.0L) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
 
 
-#define __b02(x) (     (x) | (     (x) >>  1))
-#define __b04(x) (__b02(x) | (__b02(x) >>  2))
-#define __b08(x) (__b04(x) | (__b04(x) >>  4))
-#define __b16(x) (__b08(x) | (__b08(x) >>  8))
-#define __b32(x) (__b16(x) | (__b16(x) >> 16))
+// #define __b02(x) (     (x) | (     (x) >>  1))
+// #define __b04(x) (__b02(x) | (__b02(x) >>  2))
+// #define __b08(x) (__b04(x) | (__b04(x) >>  4))
+// #define __b16(x) (__b08(x) | (__b08(x) >>  8))
+// #define __b32(x) (__b16(x) | (__b16(x) >> 16))
 
-// Returns the next power of an integer.
-#define nextPowerOf2(x) \
-	(__b32((x)-1) + 1)
+// // Returns the next power of an integer.
+// #define nextPowerOf2(x) \
+// 	(__b32((x)-1) + 1)
 
-#define prevPowerOf2(x) \
-	(nextPowerOf2(x) >> 1)
+// #define prevPowerOf2(x) \
+// 	(nextPowerOf2(x) >> 1)
 
-#define randf(min, max) \
-	(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
+// #define randf(min, max) \
+// 	(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
 
-#define _rand(min, max) \
-	(static_cast<int>(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min)))
+// #define _rand(min, max) \
+// 	(static_cast<int>(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min)))
 
 
 // Interpolate

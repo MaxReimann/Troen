@@ -34,7 +34,7 @@ float BikeInputState::getAcceleration()
 void BikeInputState::setAngle(float angle)
 {
 	// angle should be smaller for small values to avoid overly responsive steering
-	m_angle = abs(angle) < 1.f ? sign(angle) * pow(angle, 2) : angle;
+	m_angle = abs(angle) < 1.f ? osg::sign(angle) * pow(angle, 2) : angle;
 }
 
 void BikeInputState::setAcceleration(float acceleration)

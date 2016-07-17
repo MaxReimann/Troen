@@ -42,6 +42,9 @@ btTransform LevelController::getSpawnPointForBikeWithIndex(int index)
 
 btTransform LevelController::getRandomSpawnPoint()
 {
+#define randf(min, max) \
+	(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
+
 	int index = randf(0, m_initialBikePositionTransforms.size() - 1);
 	return m_initialBikePositionTransforms[index];
 }
@@ -79,6 +82,9 @@ void LevelController::addRigidBodiesToWorld()
 
 void LevelController::addItemBox()
 {
+#define randf(min, max) \
+		(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
+		
 	float x = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
 	float y = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
 	btVector3 position(x, y, +0.5);

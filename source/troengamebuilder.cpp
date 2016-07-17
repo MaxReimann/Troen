@@ -43,6 +43,8 @@ t(game) {};
 
 bool TroenGameBuilder::build()
 {
+
+
 	t->m_rootNode = new osg::Group;
 	t->m_sceneNode = new osg::Group;
 

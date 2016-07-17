@@ -182,7 +182,8 @@ m_hasGameView(config->ownView[id])
 }
 
 void Player::setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNode) {
-	m_reflection = std::make_shared<Reflection>(game->levelController()->getFloorView(), m_gameView, game->skyDome()->getSkyboxTexture(), m_id);
+	m_reflection = std::make_shared<Reflection>(game->levelController()->getFloorView(), m_gameView, 
+													game->skyDome()->getSkyboxTexture(), m_id);
 	m_playerNode->getOrCreateStateSet()->addUniform(new osg::Uniform("reflectionTex", 5 + m_id));
 
 	reflection()->addSceneNode(sceneNode);
@@ -222,6 +223,9 @@ Player::~Player()
 
 float Player::increaseHealth(float diff)
 {
+	#define clamp(l, u, x) \
+	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
+	
 	m_health = clamp(0, BIKE_DEFAULT_HEALTH, m_health + diff);
 	return m_health;
 }

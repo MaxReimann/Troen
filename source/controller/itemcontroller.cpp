@@ -21,6 +21,8 @@ using namespace troen;
 ItemController::ItemController(btVector3 position, std::weak_ptr<PhysicsWorld> world, TroenGame* troenGame, LevelView* levelView)
 {
 	AbstractController();
+	#define randf(min, max) \
+		(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
 
 	m_type = (ItemController::Type) (int) floor(randf(0, COUNT));
 	m_position = position;

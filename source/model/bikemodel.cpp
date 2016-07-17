@@ -152,6 +152,9 @@ void BikeModel::updateAngularVelocity(float speed)
 	// turnFactor
 	// -> stronger steering for low velocities
 	// -> weaker steering at high velocities
+	#define clamp(l, u, x) \
+	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
+	
 	float turnFactor = clamp(0.1, 1, 2 * BIKE_VELOCITY_MIN / speed);
 	float turningRad = PI / 180 * m_steering * (BIKE_TURN_FACTOR_MAX * turnFactor);
 

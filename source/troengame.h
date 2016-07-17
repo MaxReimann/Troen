@@ -18,6 +18,12 @@
 #include "resourcepool.h"
 #include "view/skydome.h"
 
+// #define OMEGA_NO_GL_HEADERS
+// #include <omega.h>
+// #include <omegaToolkit.h>
+// #include <omegaOsg/omegaOsg.h>
+
+
 
 #define MAX_BIKES 6
 namespace troen
@@ -116,6 +122,7 @@ namespace troen
 		// Game Loop
 		//
 		void startGameLoop();
+		void stepGameOmega();
 		void fixCulling(osg::ref_ptr<osgViewer::View> view);
 		void handleBending(double interpolationSkalar);
 
