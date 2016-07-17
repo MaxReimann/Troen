@@ -176,7 +176,7 @@ void HUDView::resize(const int width,const int height)
 	m_camera->setViewport(hudViewport);
 	resizeHudComponents(width, height);
 
-	int smallerBound = min(height, width);
+	int smallerBound = std::min(height, width);
 	int offsetX = smallerBound / 20;
 	int offsetY = height / 30;
 	int size = smallerBound / 3;

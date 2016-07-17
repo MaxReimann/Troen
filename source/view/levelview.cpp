@@ -139,6 +139,11 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 	osg::ref_ptr<osg::Group> mainGroup = new osg::Group();
 
 	osg::ref_ptr<osg::Group> readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/levels/" + levelName + ".ive"));
+	if (!readObstacles.get())
+	{
+		std::cout << "ERROR: could not read " << "data/levels/" << levelName << ".ive" << std::endl;
+		throw;
+	}
 	//readObstacles->setCullingActive(false);
 
 

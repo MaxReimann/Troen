@@ -8,7 +8,7 @@ out float linearDepth;
 
 out vec2 uv;
 
-void mainDeform();
+void mainDeform(vec4 vertex);
 
 void main()
 {
@@ -23,7 +23,7 @@ void main()
 
 	linearDepth = (-(gl_ModelViewMatrix * gl_Vertex).z - nearFar.x) / (nearFar.y - nearFar.x);
 	gl_TexCoord[1] = vec4(objectID);
-	mainDeform();
+	mainDeform(gl_Vertex);
 
 	return;
 }

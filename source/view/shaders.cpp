@@ -60,14 +60,20 @@ void shaders::reloadShader(
 		{
 			osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
 			loadShaderSource(vertShader, vertexFileName);
-			program->addShader(vertShader);
+			if (vertShader.valid())
+				program->addShader(vertShader);
+			else
+				std::cout << "shader " << vertexFileName << " not valid" << std::endl;
 		}
 
 		if (secondVertexFileName != "")
 		{
-			osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-			loadShaderSource(vertShader, secondVertexFileName);
-			program->addShader(vertShader);
+			osg::ref_ptr<osg::Shader> vertShader2 = new osg::Shader(osg::Shader::VERTEX);
+			loadShaderSource(vertShader2, secondVertexFileName);
+			if (vertShader2.valid())
+				program->addShader(vertShader2);
+			else
+				std::cout << "shader " << secondVertexFileName << " not valid" << std::endl;
 
 		}
 

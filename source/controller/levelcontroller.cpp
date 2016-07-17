@@ -5,8 +5,8 @@
 #include <btBulletDynamicsCommon.h>
 // troen
 #include "../constants.h"
-#include "../model/LevelModel.h"
-#include "../view/LevelView.h"
+#include "../model/levelmodel.h"
+#include "../view/levelview.h"
 #include "../model/physicsworld.h"
 
 #include "itemcontroller.h"

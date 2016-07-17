@@ -297,6 +297,7 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 
 	if (m_useDebugView)
 	{
+		// std::cout << "debug draw" << std::endl;
 		m_world->debugDrawWorld();
 		m_debug->EndDraw();
 	}

@@ -27,9 +27,9 @@ AI::AI(osg::ref_ptr<BikeInputState> bikeInputState, troen::BikeController* bikeC
 	addFunction("log", this, &AI::log);
 	addFunction("setTurbo", this, &AI::setTurbo);
 
-	addProperty<double>("acceleration", *this, &AI::getAcceleration, &AI::setAcceleration);
-	addProperty<double>("angle", *this, &AI::angle, &AI::setAngle);
-	addProperty<double>("distanceToNextObstacle", *this, &AI::distanceToNextObstacle, &AI::setDistanceToNextObstacle);
+	addProperty<double>("acceleration", this, &AI::getAcceleration, &AI::setAcceleration);
+	addProperty<double>("angle", this, &AI::angle, &AI::setAngle);
+	addProperty<double>("distanceToNextObstacle", this, &AI::distanceToNextObstacle, &AI::setDistanceToNextObstacle);
 }
 
 void AI::run()

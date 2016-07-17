@@ -58,6 +58,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include(cmake/Custom.cmake)
 include(cmake/GitRevision.cmake)
 
+#just for temporary convenience
+set(CMAKE_INSTALL_PREFIX /local/Troen/bin)
+
 #################################################
 # PLATFORM AND ARCHITECTURE
 #################################################
@@ -123,27 +126,42 @@ endforeach(package)
 # OpenGL
 find_package(OpenGL REQUIRED)
 
-# OpenSceneGraph
-find_package(OpenSceneGraph REQUIRED)
+# # OpenSceneGraph
+# find_package(OpenSceneGraph REQUIRED)
 
-# Bullet
-set(BULLET_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/BULLET_PHYSICS")
-find_package(BULLET REQUIRED)
+
+# set(OMEGA_BINARY_DIR /local/omegalib/build )
+set(Omegalib_DIR /local/omegalib/build)
+find_package(Omegalib)
+
+
+# # Bullet
+set(BULLET_ROOT "${Omegalib_DIR}/3rdparty/bullet/install")
+# set(BULLET_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/bullet/install")
+message(STATUS "bullet root: ${BULLET_ROOT}")
+find_package(Bullet REQUIRED)
+
+# MESSAGE(STATUS "osg bullet inc: ${OSGBULLET_INCLUDES}")
+# MESSAGE(STATUS "bullet libs: ${BULLET_LIBS}, ${OSGBULLET_LIBS}")
 
 # FMOD
+set(FMOD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/fmod/)
 find_package(FMOD REQUIRED)
 
 # HIDAPI
-find_package(HIDAPI REQUIRED)
+# find_package(HIDAPI REQUIRED)
 
 #RakNet
+set(RAKNET_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/RakNet)
 find_package(RakNet REQUIRED)
 
 # V8
-find_package(V8 REQUIRED)
+# find_package(V8 REQUIRED)
 
 # Scriptzeug
-find_package(Scriptzeug REQUIRED)
+find_package(Libzeug REQUIRED)
+
+
 
 
 #################################################
@@ -300,6 +318,7 @@ set(sources
 
 )
 
+
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/source"
 	"\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.ui$|\\\\.qrc$" "Source Files" ${sources})
 
@@ -318,13 +337,15 @@ qt5_wrap_ui(${target} BendedViews/src/ui/DeformationConfigWidget.ui)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}
-	${OPENSCENEGRAPH_INCLUDE_DIRS}
+	# ${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${BULLET_INCLUDE_DIRS}
+	${OMEGA_INCLUDE_DIRS}
+	${BULLET_INCLUDES} #from omega
+	#${OMEGA_OSG_INCLUDE_DIRS}
 	${FMOD_INCLUDE_DIRS}
-	${HIDAPI_INCLUDE_DIRS}
+	# ${HIDAPI_INCLUDE_DIRS}
 	${RakNet_INCLUDES}
-	${V8_INCLUDE}
-	${SCRIPTZEUG_INCLUDE_DIRS}
+	${LIBZEUG_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR} #for the generated files
 )
 
@@ -332,13 +353,16 @@ include_directories(
 
 target_link_libraries( ${target}
     ${OPENGL_LIBRARIES}
-    ${OPENSCENEGRAPH_LIBRARIES}
+    # ${OPENSCENEGRAPH_LIBRARIES}
     ${BULLET_LIBRARIES}
+    ${OMEGA_LIB}
+    # ${BULLET_LIBS}
+	${OMEGA_OSG_LIB}
     ${FMOD_LIBRARIES}
-	${HIDAPI_LIBRARIES}
+	# ${HIDAPI_LIBRARIES}
 	${RakNet_LIBRARY}
-		${V8_LIBS}
-		${SCRIPTZEUG_LIBRARIES}
+	# ${OMEGA_TOOLKIT_LIB}
+	${LIBZEUG_LIBRARIES}
 )
 
 if (WIN32)
@@ -398,6 +422,11 @@ else()
     endif()
 endif()
 
+if (MSVC)
+	set(LIBENDING dll)
+elseif(LINUX)
+	set(LIBENDING so)
+endif()
 
 #
 # Global deployment
@@ -411,10 +440,10 @@ install(FILES AUTHORS DESTINATION ${INSTALL_ROOT} COMPONENT ${META_PROJECT_NAME}
 # Add a revision file containing the git-head tag for cpack and install
 create_revision_file(${CMAKE_BINARY_DIR}/revision ${INSTALL_ROOT})
 # data
-install(
-	DIRECTORY ${CMAKE_SOURCE_DIR}/data
-	DESTINATION ${INSTALL_DATA}
-	COMPONENT ${META_PROJECT_NAME})
+# install(
+# 	DIRECTORY ${CMAKE_SOURCE_DIR}/data
+# 	DESTINATION ${INSTALL_DATA}
+# 	COMPONENT ${META_PROJECT_NAME})
 # shaders
 install(
 	DIRECTORY ${CMAKE_SOURCE_DIR}/shaders
@@ -431,28 +460,18 @@ install(
 	DESTINATION ${INSTALL_ROOT}
 	COMPONENT ${META_PROJECT_NAME})
 
-# hidapi, fmod, raknet
-install(
-	FILES
-		${CMAKE_SOURCE_DIR}/3rdParty/hidapi/hidapi.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/fmod/api/fmodex64.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/RakNet/Lib/RakNet_VS2008_DLL_Release_x64.dll
-	DESTINATION ${INSTALL_ROOT}
-	COMPONENT ${META_PROJECT_NAME})
+file( GLOB installlibs ${CMAKE_SOURCE_DIR}/3rdParty/RakNet/Lib/*.${LIBENDING}
+   ${CMAKE_SOURCE_DIR}/3rdParty/fmod/api/lib/*.${LIBENDING}
+   ${CMAKE_SOURCE_DIR}/3rdParty/fmod/fmoddesignerapi/api/lib/*.${LIBENDING}
+   ${CMAKE_SOURCE_DIR}/3rdParty/libzeug/lib/*.${LIBENDING}*
+	)
 
-# scriptzeug & v8
+# # hidapi, fmod, raknet
 install(
-	FILES
-		${CMAKE_SOURCE_DIR}/3rdParty/scriptzeug/lib/propertyzeug.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/scriptzeug/lib/signalzeug.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/scriptzeug/lib/scriptzeug.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/scriptzeug/lib/reflectionzeug.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/v8/bin/v8.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/v8/bin/icudt.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/v8/bin/icui18n.dll
-		${CMAKE_SOURCE_DIR}/3rdParty/v8/bin/icuuc.dll
-	DESTINATION ${INSTALL_ROOT}
-	COMPONENT ${META_PROJECT_NAME})
+	FILES ${installlibs}
+    DESTINATION ${INSTALL_ROOT}
+	COMPONENT ${META_PROJECT_NAME}
+)
 
 # Qt5
 get_target_property(QtCore_location Qt5::Core LOCATION)
@@ -467,37 +486,20 @@ install(
 	DESTINATION ${INSTALL_ROOT}
 	COMPONENT ${META_PROJECT_NAME})
 
-# OSG
-string(REGEX REPLACE "/include" "/bin" OPENSCENEGRAPH_DLL_DIR ${OPENSCENEGRAPH_INCLUDE_DIRS})
-#file(GLOB osgDLLs RELATIVE "${OPENSCENEGRAPH_DLL_DIR}" "*.dll")
+# # OSG
+# string(REGEX REPLACE "/include" "/bin" OPENSCENEGRAPH_DLL_DIR ${OPENSCENEGRAPH_INCLUDE_DIRS})
+# #file(GLOB osgDLLs RELATIVE "${OPENSCENEGRAPH_DLL_DIR}" "*.dll")
 
-install(
-	FILES
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osg.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgAnimation.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgDB.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgFX.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgGA.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgManipulator.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgParticle.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgPresentation.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgQt.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgShadow.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgSim.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgText.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgTerrain.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgUtil.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgViewer.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgVolume.dll
-		${OPENSCENEGRAPH_DLL_DIR}/osg111-osgWidget.dll
-		${OPENSCENEGRAPH_DLL_DIR}/ot14-OpenThreads.dll
-	DESTINATION ${INSTALL_ROOT}
-	COMPONENT ${META_PROJECT_NAME})
+# install(
+# 	FILES
+# 		${OSG_LIBS}
+# 	DESTINATION ${INSTALL_ROOT}
+# 	COMPONENT ${META_PROJECT_NAME})
 
-install(
-	DIRECTORY ${OPENSCENEGRAPH_DLL_DIR}/osgPlugins-3.3.1
-	DESTINATION ${INSTALL_ROOT}
-	COMPONENT ${META_PROJECT_NAME})
+# install(
+# 	DIRECTORY ${OMEGA_BINARY_DIR}/3rdParty/osg/lib
+# 	DESTINATION ${INSTALL_ROOT}
+# 	COMPONENT ${META_PROJECT_NAME})
 
 # executable
 INSTALL(

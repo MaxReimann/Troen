@@ -3,7 +3,7 @@
 // Qt
 #include <QApplication>
 //troen
-#include "MainWindow.h"
+#include "mainwindow.h"
 #include "troengame.h"
 
 #define EXTERN

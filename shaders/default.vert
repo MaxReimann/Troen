@@ -5,7 +5,7 @@ uniform bool isReflecting;
 out vec2 uv;
 uniform bool bendingActivated;
 
-void mainDeform();
+void mainDeform(vec4 vertex);
 void mainDeformReflected();
 
 out float scaled_height;
@@ -21,7 +21,7 @@ void main(void)
 		//TODO: make mainDeformReflected work
 		//mainDeformReflected();
 	} else {
-		mainDeform();
+		mainDeform(gl_Vertex);
 	}
 	return;
 

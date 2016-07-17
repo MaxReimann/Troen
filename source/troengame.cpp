@@ -8,7 +8,7 @@
 // #include <osgDB/ReadFile>
 #include <osgUtil/Optimizer>
 // qt
-#include <qcoreapplication>
+#include <QCoreApplication>
 // troen
 #include "troengamebuilder.h"
 #include "constants.h"

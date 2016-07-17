@@ -51,7 +51,7 @@ namespace troen
 		btVector3 getAngularVelocity();
 		osg::Quat getTilt();
 		btTransform getTransform();
-		btVector3 BikeModel::getDirection();
+		btVector3 getDirection();
 		std::shared_ptr<btRigidBody> getRigidBody();
 	private:
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;

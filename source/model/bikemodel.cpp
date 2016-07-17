@@ -184,7 +184,7 @@ float BikeModel::calculateAcceleratedSpeed(btVector3 velocityXY, float timeFacto
 {
 	// accelerate
 	float speed;
-	float speedFactor = max(0, 1 - velocityXY.length() / BIKE_VELOCITY_MAX);
+	float speedFactor = std::max(static_cast<btScalar>(0.0), 1 - velocityXY.length() / BIKE_VELOCITY_MAX);
 	float accInterpolation = m_bikeInputState->getAcceleration() * interpolate(speedFactor, InterpolateInvSquared);
 
 	speed  = velocityXY.length();

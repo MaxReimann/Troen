@@ -117,8 +117,8 @@ namespace troen
 #define round(v)\
 	floor(v + 0.5)
 
-#define abs(v) \
-	(((v) < 0) ? -(v) : (v))
+// #define abs(v) \
+// 	(((v) < 0) ? -(v) : (v))
 
 #define sign(v) \
 	(((v) < 0) ? -1 : 1)

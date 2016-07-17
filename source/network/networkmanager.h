@@ -110,7 +110,7 @@ namespace troen
 
 			//subclass responibilities
 			virtual bool isValidSession();
-			virtual void handleSubClassMessages(RakNet::Packet *packet) = NULL; //pure virtual function
+			virtual void handleSubClassMessages(RakNet::Packet *packet) = 0; //pure virtual function
 			
 			//queues
 			void enqueueMessage(bikeUpdateMessage message);
@@ -122,7 +122,7 @@ namespace troen
 			void sendUpdateMessages();
 			template <typename TQueue, typename TSendStruct> 
 			void sendMessages(QQueue<TQueue> *sendBufferQueue, TSendStruct &messageToSend, int order, int statusMessage);
-			void sendPoints(int pointCount, int status, short secondBike = NULL);
+			void sendPoints(int pointCount, int status, short secondBike = 0);
 			void synchronizeGameStart(troen::GameConfig &config);
 			virtual void setLocalGameReady();
 			void sendGameStatusMessage(gameStatus status, troen::Player *bikePlayer, troen::Player *fencePlayer);

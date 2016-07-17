@@ -16,7 +16,7 @@ namespace input
 	public:
 		Keyboard(osg::ref_ptr<BikeInputState> bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol> keys);
 		virtual bool handle(const osgGA::GUIEventAdapter& eventAdapter, osgGA::GUIActionAdapter&);
-		virtual void accept(osgGA::GUIEventHandlerVisitor& visitor)   { visitor.visit(*this); };
+		// virtual void accept(osgGA::GUIEventHandlerVisitor& visitor)   { visitor.visit(*this); };
 		void run() override;
 
 	protected:

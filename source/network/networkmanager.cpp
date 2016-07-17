@@ -511,7 +511,7 @@ void NetworkPlayerInfo::serialize(RakNet::BitStream *bs)
 	bs->Write(networkID);
 
 	char message[32];
-	strncpy_s(message, name.toStdString().c_str(), 32);
+	strncpy(message, name.toStdString().c_str(), 32);
 	bs->Write(message);
 
 	bs->WriteVector(color.red(), color.green(), color.blue());

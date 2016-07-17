@@ -5,7 +5,7 @@
 #include "pollingdevice.h"
 #include "../forwarddeclarations.h"
 
-#include <hidapi.h>
+// #include <hidapi.h>
 
 namespace troen
 {
@@ -26,9 +26,10 @@ namespace input
 		bool checkConnection();
 		void setColor(osg::Vec3 color);
 		void setVibration(const bool b) override;
-		hid_device *_controller = nullptr;
+		// hid_device *_controller = nullptr;
+		bool _controller = false; //dummy
 
-		static hid_device_info* allHidDevices;
+		// static hid_device_info* allHidDevices;
 		static wchar_t* getFreeDeviceSN();
 		static void reset();
 		static bool enumeratedHidDevices;
