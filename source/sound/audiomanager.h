@@ -43,7 +43,7 @@ namespace sound
 		SoundMap sounds[CATEGORY_COUNT];
 		FMOD_MODE modes[CATEGORY_COUNT];
 
-		float m_timeSinceLastBeat = 0.f;
+		float m_timeSinceLastBeat;
 
 		FMOD::Channel* currentSong;
 		FMOD::Channel* engineChannel;

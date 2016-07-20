@@ -3,6 +3,8 @@
 // STD includes we need everywhere
 #include <memory>
 #include <iostream>
+// #include <boost/shared_ptr.hpp>
+// #include <boost/weak_ptr.hpp>
 
 // This file contains forward declarations of classes
 
@@ -67,6 +69,8 @@ namespace scriptzeug {
 namespace troen
 {
 	class TroenGame;
+	class TroenOmegaScene;
+	class GameThread;
 	class TroenGameBuilder;
 	class SampleOSGViewer;
 	class GameEventHandler;

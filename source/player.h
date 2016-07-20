@@ -24,7 +24,7 @@ namespace troen
 			TroenGame* game,
 			const std::shared_ptr<GameConfig>& config, 
 			const int id);
-		void createHUDController(const std::vector<std::shared_ptr<Player>>& players);
+		void createHUDController(const std::vector<std::shared_ptr<Player> >& players);
 		virtual ~Player();
 
 		//

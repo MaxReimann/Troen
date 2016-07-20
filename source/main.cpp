@@ -2,6 +2,7 @@
 #include <iostream>
 // Qt
 #include <QApplication>
+
 //troen
 #include "mainwindow.h"
 #include "troengame.h"

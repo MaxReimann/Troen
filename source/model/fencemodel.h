@@ -20,9 +20,9 @@ namespace troen
 		FenceController* m_fenceController;
 		std::weak_ptr<PhysicsWorld> m_world;
 
-		std::deque<std::shared_ptr<btRigidBody>>		m_rigidBodyDeque;
-		std::deque<std::shared_ptr<btMotionState>>		m_motionStateDeque;
-		std::deque<std::shared_ptr<btCollisionShape>>	m_collisionShapeDeque;
+		std::deque<std::shared_ptr<btRigidBody> >		m_rigidBodyDeque;
+		std::deque<std::shared_ptr<btMotionState> >		m_motionStateDeque;
+		std::deque<std::shared_ptr<btCollisionShape> >	m_collisionShapeDeque;
 
 	};
 }

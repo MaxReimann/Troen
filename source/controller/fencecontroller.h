@@ -17,7 +17,7 @@ namespace troen
 		void update(btVector3 position, btQuaternion rotation);
 		void attachWorld(std::shared_ptr<PhysicsWorld>& world);
 
-		osg::ref_ptr<osg::Group> getViewNode() override;
+		osg::ref_ptr<osg::Group> getViewNode();
 
 		Player* player() { return m_player; };
 

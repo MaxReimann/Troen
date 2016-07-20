@@ -221,7 +221,7 @@ void PhysicsWorld::initializeWorld()
 	m_world->setInternalTickCallback(tickCallback, static_cast<void *>(this));
 }
 
-void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies, const short group/*=0*/, const short mask/*=0*/)
+void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody> >& bodies, const short group/*=0*/, const short mask/*=0*/)
 {
 	for (auto body : bodies)
 	{
@@ -234,7 +234,7 @@ void PhysicsWorld::addRigidBody(btRigidBody *body, const short group /*=0*/, con
 	m_world->addRigidBody(body, group, mask);
 }
 
-void PhysicsWorld::removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies)
+void PhysicsWorld::removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody> >& bodies)
 {
 	for (auto body : bodies) {
 		removeRigidBodyFromCollisionPairs(body.get());

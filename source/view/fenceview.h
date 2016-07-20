@@ -37,7 +37,7 @@ namespace troen
 		osg::ref_ptr<osg::DrawArrays>	m_drawArrays;
 		osg::ref_ptr<osg::Geode>		m_geode;
 		osg::ref_ptr<osg::Group>		m_radarElementsGroup;
-		std::deque<osg::ref_ptr<osg::MatrixTransform>>	m_radarFenceBoxes;
+		std::deque<osg::ref_ptr<osg::MatrixTransform> >	m_radarFenceBoxes;
 
 		std::weak_ptr<FenceModel>		m_model;
 

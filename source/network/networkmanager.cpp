@@ -36,10 +36,10 @@ NetworkManager::NetworkManager(troen::TroenGame *game)
 	m_sendGameStatusMessage = new QQueue<gameStatusMessage>();
 	m_receivedGameStatusMessages = new QQueue<gameStatusMessage>();
 	m_sendBikeStatusMessage = new QQueue<bikeStatusMessage>();
-	m_players = std::vector<std::shared_ptr<NetworkPlayerInfo>>();
+	m_players = std::vector<std::shared_ptr<NetworkPlayerInfo> >();
 	m_sendBufferMutex = new QMutex();
 	
-	m_localBikeControllers = std::vector<std::shared_ptr<BikeController>>();
+	m_localBikeControllers = std::vector<std::shared_ptr<BikeController> >();
 	m_lastUpdateTime = 0;
 	m_gameID = 0;
 	m_troenGame = game;

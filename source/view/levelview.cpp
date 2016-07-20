@@ -116,7 +116,7 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
 	setTexture(obstaclesStateSet, "data/textures/floor.tga", 0);
 
 	//will be overwritten if reflection is used
-	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::GRID_NOREFLECTION, levelSize, GLOW, 1.0);
+	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node> >(floors), shaders::GRID_NOREFLECTION, levelSize, GLOW, 1.0);
 
 
 	floors->setNodeMask(CAMERA_MASK_MAIN);

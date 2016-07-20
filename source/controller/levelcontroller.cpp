@@ -14,7 +14,8 @@
 
 using namespace troen;
 
-LevelController::LevelController(TroenGame* troenGame, std::string levelName) : m_levelName(levelName)
+LevelController::LevelController(TroenGame* troenGame, std::string levelName) : m_levelName(levelName),
+m_targetItemCount(100)
 {
 	AbstractController();
 	m_model = m_levelModel = std::make_shared<LevelModel>(this, levelName);
@@ -84,7 +85,7 @@ void LevelController::addItemBox()
 {
 #define randf(min, max) \
 		(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
-		
+
 	float x = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
 	float y = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
 	btVector3 position(x, y, +0.5);

@@ -27,7 +27,7 @@ using namespace troen::networking;
 
 ServerManager::ServerManager(troen::TroenGame *game, std::vector<QString> playerNames) : NetworkManager(game)
 {
-	m_startPositions = std::make_shared<std::vector<btTransform>>();
+	m_startPositions = std::make_shared<std::vector<btTransform> >();
 	btVector3 Z_AXIS(0, 0, 1);
 	m_startPositions->push_back(btTransform(btQuaternion(Z_AXIS, (float)PI * 3.f / 4.f), btVector3(20, 20, BIKE_DIMENSIONS.z() / 2 + 500)));
 	m_startPositions->push_back(btTransform(btQuaternion(Z_AXIS, (float)PI * 3.f / 4.f), btVector3(40, 20, BIKE_DIMENSIONS.z() / 2 + 500)));

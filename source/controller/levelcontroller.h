@@ -37,6 +37,6 @@ namespace troen
 		TroenGame* m_troenGame;
 		std::string m_levelName;
 		int m_currentItemCount;
-		int m_targetItemCount = 100;
+		int m_targetItemCount;
 	};
 }

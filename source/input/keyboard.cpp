@@ -11,7 +11,9 @@ GUIEventHandler(),
 PollingDevice(bikeInputState),
 m_bikeInputState(bikeInputState),
 m_keys(keys),
-m_handbrakePressed(false)
+m_handbrakePressed(false),
+m_leftPressed(false), m_upPressed(false), 
+m_rightPressed(false), m_downPressed(false), m_turboPressed(false), m_angle(0)
 {}
 
 bool Keyboard::handle(const osgGA::GUIEventAdapter& eventAdapter, osgGA::GUIActionAdapter& actionAdapter)

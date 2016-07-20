@@ -117,6 +117,13 @@ namespace troen
 #define round(v)\
 	floor(v + 0.5)
 
+#define btToOSGQuat(q) \
+	osg::Quat(q.x(), q.y(), q.z(), q.w())
+#define btToOSGVec3(v) \
+	osg::Vec3(v.x(), v.y(), v.z())
+
+
+
 // #define abs(v) \
 // 	(((v) < 0) ? -(v) : (v))
 
@@ -192,18 +199,18 @@ namespace troen
 // 	(((x) > 0.0) ? exp(log(x) / 3.0L) : (((x) < 0.0) ? -cbrt(-(x)) : 0.0))
 
 
-// #define __b02(x) (     (x) | (     (x) >>  1))
-// #define __b04(x) (__b02(x) | (__b02(x) >>  2))
-// #define __b08(x) (__b04(x) | (__b04(x) >>  4))
-// #define __b16(x) (__b08(x) | (__b08(x) >>  8))
-// #define __b32(x) (__b16(x) | (__b16(x) >> 16))
+// #define __b02(x) (     (x) | (     (x) > >  1))
+// #define __b04(x) (__b02(x) | (__b02(x) > >  2))
+// #define __b08(x) (__b04(x) | (__b04(x) > >  4))
+// #define __b16(x) (__b08(x) | (__b08(x) > >  8))
+// #define __b32(x) (__b16(x) | (__b16(x) > > 16))
 
 // // Returns the next power of an integer.
 // #define nextPowerOf2(x) \
 // 	(__b32((x)-1) + 1)
 
 // #define prevPowerOf2(x) \
-// 	(nextPowerOf2(x) >> 1)
+// 	(nextPowerOf2(x) > > 1)
 
 // #define randf(min, max) \
 // 	(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min))
@@ -212,83 +219,3 @@ namespace troen
 // 	(static_cast<int>(static_cast<float>(rand()) / RAND_MAX * ((max)-(min)) + (min)))
 
 
-// Interpolate
-
-#define linear(t)       (t)
-
-#define smoothstep(t)   ((t) * (t) * (3 - 2 * (t)))
-#define smoothstep2(t)  (smoothstep(smoothstep(t)))
-#define smoothstep3(t)  (smoothstep(smoothstep2(t)))
-
-#define smootherstep(t) ((t) * (t) * (t) * ((t) * (6 * (t) - 15) + 10))
-
-#define squared(t)      ((t) * (t))
-#define invsquared(t)   (1 - (1 - (t)) * (1 - (t)))
-
-#define cubed(t)        ((t) * (t) * (t))
-#define invcubed(t)     (1 - (1 - (t)) * (1 - (t)) * (1 - (t)))
-
-#define sin(t)          (sin(t * 1.57079632679489661923))
-#define invsin(t)       (1 - sin((1 - (t)) * 1.57079632679489661923))
-
-
-#define smoothstep_ext(t, l, r) \
-	((t) < (l) ? 0 : (r) < (t) ? 1 : smoothstep(((t)-(l)) / ((r)-(l))))
-
-#define btToOSGVec3(v) \
-	osg::Vec3(v.x(), v.y(), v.z())
-
-#define btToOSGQuat(q) \
-	osg::Quat(q.x(), q.y(), q.z(), q.w())
-
-
-// Several interpolation methods in action: http://sol.gfxile.net/interpolation/
-
-enum InterpolationMethod
-{
-	InterpolateLinear
-	, InterpolateSmoothStep
-	, InterpolateSmoothStep2
-	, InterpolateSmoothStep3
-	, InterpolateSmootherStep // Ken Perlin
-	, InterpolateSquared
-	, InterpolateInvSquared
-	, InterpolateCubed
-	, InterpolateInvCubed
-	, InterpolateSin          // strong in, soft out
-	, InterpolateInvSin       // soft in, strong out
-};
-
-
-template<typename T>
-inline const T interpolate(
-	const T t
-	, const InterpolationMethod function = InterpolateLinear)
-{
-	switch (function)
-	{
-	case InterpolateSmoothStep:
-		return smoothstep(t);
-	case InterpolateSmoothStep2:
-		return smoothstep2(t);
-	case InterpolateSmoothStep3:
-		return smoothstep3(t);
-	case InterpolateSmootherStep:
-		return smootherstep(t);
-	case InterpolateSquared:
-		return squared(t);
-	case InterpolateInvSquared:
-		return invsquared(t);
-	case InterpolateCubed:
-		return cubed(t);
-	case InterpolateInvCubed:
-		return invcubed(t);
-	case InterpolateSin:
-		return static_cast<T>(sin(t));
-	case InterpolateInvSin:
-		return static_cast<T>(invsin(t));
-	default:
-	case InterpolateLinear:
-		return linear(t);
-	}
-}

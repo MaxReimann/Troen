@@ -5,7 +5,7 @@
 
 using namespace troen;
 
-ResourcePool::ResourcePool() {}
+ResourcePool::ResourcePool() : m_dataAlreadyRead(false) {}
 
 ResourcePool::~ResourcePool() {}
 

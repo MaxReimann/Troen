@@ -187,7 +187,7 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 
 void GameLogic::separationEvent(btRigidBody * pBody0, btRigidBody * pBody1)
 {
-	if (!pBody0->isInWorld() || !pBody1->isInWorld() || pBody0->getUserPointer() == nullptr || pBody1->getUserPointer() == nullptr) {
+	if (!pBody0->isInWorld() || !pBody1->isInWorld() || pBody0->getUserPointer() == NULL || pBody1->getUserPointer() == NULL) {
 		return;
 	}
 

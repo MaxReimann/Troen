@@ -19,7 +19,7 @@ LevelModel::LevelModel(const LevelController* levelController, std::string level
 {
 	AbstractModel();
 	m_levelController = levelController;
-	m_rigidBodies = std::vector<std::shared_ptr<btRigidBody>>();
+	m_rigidBodies = std::vector<std::shared_ptr<btRigidBody> >();
 
 	addFloor(-10);
 	addObstaclesFromFile(levelName);

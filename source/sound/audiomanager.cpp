@@ -1,4 +1,9 @@
 #include "audiomanager.h"
+
+
+
+
+
 #include <math.h>
 #include <algorithm>
 #include <stdlib.h>
@@ -22,7 +27,7 @@ float RandomBetween(float min, float max) {
 	return min + n * (max - min);
 }
 
-AudioManager::AudioManager() : currentSong(0), engineChannel(0), fade(FADE_NONE) {
+AudioManager::AudioManager() : currentSong(0), engineChannel(0), fade(FADE_NONE), m_timeSinceLastBeat(0.f) {
 	// Initialize system
 	FMOD::System_Create(&system);
 	system->init(100, FMOD_INIT_NORMAL, 0);

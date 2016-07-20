@@ -17,14 +17,14 @@ namespace input
 		Keyboard(osg::ref_ptr<BikeInputState> bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol> keys);
 		virtual bool handle(const osgGA::GUIEventAdapter& eventAdapter, osgGA::GUIActionAdapter&);
 		// virtual void accept(osgGA::GUIEventHandlerVisitor& visitor)   { visitor.visit(*this); };
-		void run() override;
+		void run();
 
 	protected:
 		osg::ref_ptr<BikeInputState> m_bikeInputState;
 		std::vector<osgGA::GUIEventAdapter::KeySymbol> m_keys;
-		float m_handbrakePressed = 0;
-		bool m_leftPressed = false, m_upPressed = false, m_rightPressed = false, m_downPressed = false, m_turboPressed = false;
-		float m_angle = 0;
+		float m_handbrakePressed;
+		bool m_leftPressed, m_upPressed, m_rightPressed, m_downPressed, m_turboPressed;
+		float m_angle;
 	};
 }
 }

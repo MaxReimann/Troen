@@ -48,7 +48,7 @@ namespace troen
 			int m_numClientsConnected;
 
 
-			std::shared_ptr<std::vector<btTransform>> m_startPositions;
+			std::shared_ptr<std::vector<btTransform> > m_startPositions;
 			std::vector<QString> m_playerNames;
 			bool m_initialReset;
 		};

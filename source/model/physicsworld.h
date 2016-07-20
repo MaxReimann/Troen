@@ -10,7 +10,7 @@
 #include "../forwarddeclarations.h"
 
 // typedefs for collision events
-typedef std::vector<std::shared_ptr<troen::AbstractController>> ControllerVector;
+typedef std::vector<std::shared_ptr<troen::AbstractController> > ControllerVector;
 typedef std::pair<const btRigidBody*, const btRigidBody*> CollisionPair;
 typedef std::set<CollisionPair> CollisionPairSet;
 
@@ -28,9 +28,9 @@ namespace troen
 		void initializeWorld();
 		void stepSimulation(const long double currentTime);
 
-		void addRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies, const short group = 0, const short mask = 0);
+		void addRigidBodies(const std::vector<std::shared_ptr<btRigidBody> >& bodies, const short group = 0, const short mask = 0);
 		void addRigidBody(btRigidBody *body, const short group = 0, const short mask = 0);
-		void removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies);
+		void removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody> >& bodies);
 		void removeRigidBody(btRigidBody* body);
 
 		void removeRigidBodyFromCollisionPairs(btRigidBody* body);

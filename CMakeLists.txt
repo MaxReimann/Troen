@@ -130,8 +130,9 @@ find_package(OpenGL REQUIRED)
 # find_package(OpenSceneGraph REQUIRED)
 
 
-# set(OMEGA_BINARY_DIR /local/omegalib/build )
+#set(OMEGA_BINARY_DIR /local/omegalib/build/bin )
 set(Omegalib_DIR /local/omegalib/build)
+set(OmegaLib_SOURCE_DIR /local/omegalib/)
 find_package(Omegalib)
 
 
@@ -161,8 +162,18 @@ find_package(RakNet REQUIRED)
 # Scriptzeug
 find_package(Libzeug REQUIRED)
 
+find_package(PythonLibs 2.7)
+if(PYTHONLIBS_FOUND)
+	include(${OmegaLib_SOURCE_DIR}/external/UsePython.cmake)
+endif()
 
+#this is set to use from withiin the code to dynamically register the correct libraries
+add_definitions(-DOMEGALIB_BIN_DIR="${Omegalib_DIR}/bin")
 
+# set(OMEGA_LIB_DEPENDS 
+# 	${Omegalib_DIR}/bin/libdisplaySystem_Equalizer.so
+# 	${Omegalib_DIR}/bin/libEqualizerAdmin.so
+# 	)
 
 #################################################
 # SOURCES
@@ -188,6 +199,11 @@ set(sources
 	source/gamelogic.cpp
 	source/player.h
 	source/player.cpp
+	source/interpolate.h
+	source/omegascene.h
+	source/omegascene.cpp
+	source/gamethread.h
+	source/gamethread.cpp
 
 	source/resourcepool.h
 	source/resourcepool.cpp
@@ -341,12 +357,14 @@ include_directories(
 	${BULLET_INCLUDE_DIRS}
 	${OMEGA_INCLUDE_DIRS}
 	${BULLET_INCLUDES} #from omega
+	${OMEGA_TOOLKIT_INCLUDE_DIRS}
 	#${OMEGA_OSG_INCLUDE_DIRS}
 	${FMOD_INCLUDE_DIRS}
 	# ${HIDAPI_INCLUDE_DIRS}
 	${RakNet_INCLUDES}
 	${LIBZEUG_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR} #for the generated files
+	${PYTHON_INCLUDES}
 )
 
 
@@ -361,8 +379,10 @@ target_link_libraries( ${target}
     ${FMOD_LIBRARIES}
 	# ${HIDAPI_LIBRARIES}
 	${RakNet_LIBRARY}
-	# ${OMEGA_TOOLKIT_LIB}
+	${OMEGA_TOOLKIT_LIB}
 	${LIBZEUG_LIBRARIES}
+	${PYTHON_LIBRARIES}
+	${OMEGA_LIB_DEPENDS}
 )
 
 if (WIN32)

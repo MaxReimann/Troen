@@ -61,6 +61,6 @@ namespace troen
 		static const int m_objectCount = 8;
 		osg::Node *m_objects[m_objectCount];
 
-		bool m_dataAlreadyRead = false;
+		bool m_dataAlreadyRead;
 	};
 }

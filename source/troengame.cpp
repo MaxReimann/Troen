@@ -32,26 +32,24 @@
 #include "sound/audiomanager.h"
 
 
+
+
 #include "network/clientmanager.h"
 #include "network/servermanager.h"
 #include <thread>
 #include <mutex>
 
 
+
 using namespace troen;
 extern long double g_currentTime;
 
-TroenGame::TroenGame(QThread* thread /*= nullptr*/) :
+TroenGame::TroenGame(QThread* thread /*= NULL*/) :
 QObject(),
-m_gameConfig(nullptr),
-m_gameThread(thread)
+m_gameConfig(NULL),
+m_deformationEnd(BENDED_VIEWS_DEACTIVATED)
 {
-	if (m_gameThread == nullptr) {
-		m_gameThread = new QThread(this);
-	}
 
-	moveToThread(m_gameThread);
-	m_gameThread->start(QThread::HighestPriority);
 	m_ServerManager = NULL;
 	m_ClientManager = NULL;
 }
@@ -65,17 +63,26 @@ m_gameThread(thread)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-void TroenGame::prepareAndStartGame(const GameConfig& gameConfig)
+void TroenGame::prepareGame(const GameConfig& gameConfig)
 {
+	std::cout << "prepare game start" << std::endl;
 	m_gameConfig = std::make_shared<GameConfig>(gameConfig);
+	// m_omegaScene = std::make_shared<OmegaScene>(m_omegaScene);
+	
 
-	// Application<OsgViewer> app("osgviewer");
- //    oargs().newNamedString(':', "model", "model", "The osg model to load", sModelName);
-	// oargs().newNamedDouble('s', "size", "size", "The screen size of the model in meters (default: 1)", sModelSize);
- //    return omain(app, argc, argv);
+	m_builder = new TroenGameBuilder(this);
+	m_builder->build();
 
+	if (m_gameConfig->useDebugView)
+		m_sceneNode->addChild(m_physicsWorld->m_debug->getSceneGraph());
 
-	startGameLoop();
+	// if (m_gameConfig->fullscreen)
+	// 	setupForFullScreen();
+
+	m_gameloopTimer->start();
+	m_gameTimer->start();
+	m_gameTimer->pause();
+	// startGameLoop();
 }
 
 void TroenGame::startGameLoop()
@@ -204,8 +211,8 @@ void TroenGame::startGameLoop()
 		{
 			// calculate the time to sleep
 			long double sleepTime = (nextTime - g_gameLoopTime);
-			if (sleepTime > 0)	// sanity check, sleep until nextTime
-			if (!m_gameConfig->testPerformance) m_gameThread->msleep(sleepTime);
+			// if (sleepTime > 0)	// sanity check, sleep until nextTime
+			// if (!m_gameConfig->testPerformance) m_gameThread->msleep(sleepTime);
 		}
 	}
 
@@ -219,32 +226,17 @@ void TroenGame::startGameLoop()
 
 
 
-
 void TroenGame::stepGameOmega()
 {
 	static bool firstLoop = true;
 
 	if (firstLoop) 
 	{
-		m_builder = new TroenGameBuilder(this);
-		m_builder->build();
-
-		if (m_gameConfig->useDebugView)
-			m_sceneNode->addChild(m_physicsWorld->m_debug->getSceneGraph());
-
-		// if (m_gameConfig->fullscreen)
-		// 	setupForFullScreen();
-
-		m_gameloopTimer->start();
-		m_gameTimer->start();
-		m_gameTimer->pause();
-
 		if (isNetworking())
 		{
 			getNetworkManager()->setLocalGameReady();
 			getNetworkManager()->waitOnAllPlayers(); //blocking call
-		}
-
+		}	
 		firstLoop = false;
 	}
 
@@ -391,7 +383,7 @@ void TroenGame::handleBending(double interpolationSkalar)
 
 #define clamp(l, u, x) \
 	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
-	
+
 	currentBending = clamp(BENDED_VIEWS_ACTIVATED, BENDED_VIEWS_DEACTIVATED, currentBending);
 
 	m_deformationRendering->setDeformationStartEnd(0.05, currentBending);
@@ -507,7 +499,7 @@ bool TroenGame::synchronizeGameStart(GameConfig config)
 
 bool TroenGame::isNetworking()
 {
-	if (getNetworkManager() != nullptr)
+	if (getNetworkManager() != NULL)
 	{
 		if (getNetworkManager()->isValidSession())
 			return true;
@@ -518,9 +510,9 @@ bool TroenGame::isNetworking()
 std::shared_ptr<networking::NetworkManager> TroenGame::getNetworkManager()
 {
 	if (m_ClientManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_ClientManager);
+		return static_cast<std::shared_ptr<networking::NetworkManager> >(m_ClientManager);
 	else if (m_ServerManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_ServerManager);
+		return static_cast<std::shared_ptr<networking::NetworkManager> >(m_ServerManager);
 	else
 		return NULL;
 }

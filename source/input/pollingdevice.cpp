@@ -4,7 +4,8 @@
 
 using namespace troen::input;
 
-PollingDevice::PollingDevice(osg::ref_ptr<BikeInputState> bikeInputState)
+PollingDevice::PollingDevice(osg::ref_ptr<BikeInputState> bikeInputState) :
+			m_pollingEnabled(false), m_vibrationEnabled(false)
 {
 	m_bikeInputState = bikeInputState;
 }

@@ -118,13 +118,13 @@ SkyboxTexMatCallback::SkyboxTexMatCallback(const SkyboxTexMatCallback& copy, con
 
 void SkyboxTexMatCallback::operator()(osg::Node *node, osg::NodeVisitor* nv) {
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-    if (cv != nullptr) {
-        osg::TexMat* texMat = nullptr;
+    if (cv != NULL) {
+        osg::TexMat* texMat = NULL;
         osg::StateSet* stateSet = node->getStateSet();
-        if (stateSet != nullptr) {
+        if (stateSet != NULL) {
             texMat = static_cast<osg::TexMat*>(stateSet->getTextureAttribute(0, osg::StateAttribute::TEXMAT));
         }
-        if (texMat != nullptr) {
+        if (texMat != NULL) {
             osg::RefMatrix* modelViewMatrix = cv->getModelViewMatrix();
             osg::Quat rotation = modelViewMatrix->getRotate();
             osg::Matrix inverseRotationMatrix = osg::Matrix::rotate(rotation.inverse());

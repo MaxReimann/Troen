@@ -61,7 +61,7 @@ namespace troen
 		//
 		// getters & setters & attributes
 		//
-		virtual osg::ref_ptr<osg::Group> getViewNode() override;
+		virtual osg::ref_ptr<osg::Group> getViewNode();
 		Player * player()		{ return m_player; };
 		osg::ref_ptr<input::Keyboard> keyboardHandler()
 		{
@@ -73,7 +73,7 @@ namespace troen
 		std::pair<float, FenceController*> lastFenceCollision() { return m_lastFenceCollision; };
 
 		bool turboInitiated()	{ return m_turboInitiated; };
-		bool hasKeyboardHandler() { return m_keyboardHandler != nullptr; };
+		bool hasKeyboardHandler() { return m_keyboardHandler != NULL; };
 		
 
 		std::shared_ptr<BikeModel> getModel();
@@ -136,7 +136,7 @@ namespace troen
 		btTransform	m_initialTransform;
 		BIKESTATE	m_state;
 		float		m_speed;
-		bool		m_turboInitiated = false;
+		bool		m_turboInitiated;
 		double		m_respawnTime;
 		std::shared_ptr<PhysicsWorld> m_world;
 		float		m_timeOfLastCollision;

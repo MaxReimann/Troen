@@ -14,7 +14,7 @@ RemotePlayer::RemotePlayer(osg::ref_ptr<BikeInputState> bikeInputState)
 	m_bikeInputState = bikeInputState;
 	m_bikeInputState->setRemote(true);
 	m_newPosition = true;
-	m_newFencePositions = std::make_shared<QQueue<btTransform>>();
+	m_newFencePositions = std::make_shared<QQueue<btTransform> >();
 	m_fenceBufferMutex = std::make_shared<QMutex>();
 }
 

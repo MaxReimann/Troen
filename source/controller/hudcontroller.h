@@ -20,7 +20,7 @@ namespace troen
 	class HUDController : public AbstractController
 	{
 	public:
-		HUDController(const int index, const std::vector<std::shared_ptr<Player>>& players);
+		HUDController(const int index, const std::vector<std::shared_ptr<Player> >& players);
 		void attachSceneToRadarCamera(osg::Group* scene);
 		void setTrackNode(osg::Node* trackNode);
 
@@ -33,7 +33,7 @@ namespace troen
 			const long double currentGameTime,
 			const int timeLimit,
 			const GameLogic::GAMESTATE gameState,
-			const std::vector<std::shared_ptr<Player>>& players);
+			const std::vector<std::shared_ptr<Player> >& players);
 
 		//
 		// ingame messages
@@ -46,7 +46,7 @@ namespace troen
 		void toggleVisibility();
 	private:
 		std::shared_ptr<HUDView> m_HUDView;
-		std::deque<std::shared_ptr<IngameMessage>> m_ingameMessages;
+		std::deque<std::shared_ptr<IngameMessage> > m_ingameMessages;
 		std::default_random_engine m_randomGenerator;
 
 		std::weak_ptr<Player> m_player;

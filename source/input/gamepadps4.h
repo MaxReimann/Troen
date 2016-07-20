@@ -26,7 +26,7 @@ namespace input
 		bool checkConnection();
 		void setColor(osg::Vec3 color);
 		void setVibration(const bool b) override;
-		// hid_device *_controller = nullptr;
+		// hid_device *_controller = NULL;
 		bool _controller = false; //dummy
 
 		// static hid_device_info* allHidDevices;
@@ -42,8 +42,8 @@ namespace input
 		float m_deadzoneX, m_deadzoneY;
 
 		unsigned char m_writeBuffer[32];
-		bool m_vibrate = false;
-		wchar_t* m_serialNumber = NULL;
+		bool m_vibrate;
+		wchar_t* m_serialNumber;
 	};
 }
 }

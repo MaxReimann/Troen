@@ -34,7 +34,7 @@ namespace
 using namespace troen;
 
 HUDController::HUDController(const int id,
-	const std::vector<std::shared_ptr<Player>>& players) :
+	const std::vector<std::shared_ptr<Player> >& players) :
 AbstractController(),
 m_player(players[id])
 {
@@ -59,7 +59,7 @@ void HUDController::update(
 	const long double currentGameTime,
 	const int timeLimit,
 	const GameLogic::GAMESTATE gameState,
-	const std::vector<std::shared_ptr<Player>>& players)
+	const std::vector<std::shared_ptr<Player> >& players)
 {
 	std::shared_ptr<HUDView> hudview = m_HUDView;
 	std::shared_ptr<Player> player = m_player.lock();

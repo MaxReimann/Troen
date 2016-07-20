@@ -7,6 +7,7 @@
 #include "../constants.h"
 #include "../input/bikeinputstate.h"
 #include "../controller/bikecontroller.h"
+#include "../interpolate.h"
 #include "bikemotionstate.h"
 #include "objectinfo.h"
 #include "GetTime.h"
@@ -154,7 +155,7 @@ void BikeModel::updateAngularVelocity(float speed)
 	// -> weaker steering at high velocities
 	#define clamp(l, u, x) \
 	((x) < (l) ? (l) : (x) > (u) ? (u) : (x))
-	
+
 	float turnFactor = clamp(0.1, 1, 2 * BIKE_VELOCITY_MIN / speed);
 	float turningRad = PI / 180 * m_steering * (BIKE_TURN_FACTOR_MAX * turnFactor);
 

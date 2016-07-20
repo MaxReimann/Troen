@@ -11,6 +11,7 @@
 // troen
 #include "forwarddeclarations.h"
 #include "troengame.h"
+#include "gamethread.h"
 #include "qlabel.h"
 
 
@@ -24,7 +25,7 @@ namespace troen
 		Q_OBJECT
 
 	public:
-		MainWindow (QWidget * parent = nullptr);
+		MainWindow (QWidget * parent = NULL);
 		virtual ~MainWindow();
 		GameConfig getGameConfig();
 
@@ -74,6 +75,7 @@ namespace troen
 		QComboBox* m_levelComboBox;
 
 		TroenGame*	m_troenGame;
+		std::shared_ptr<GameThread> m_troenGameThread;
 		QThread*	m_gameThread;
 
 		double		m_lastTime;

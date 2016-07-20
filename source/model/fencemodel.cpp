@@ -11,7 +11,7 @@ FenceModel::FenceModel(FenceController* fenceController)
 {
 	AbstractModel();
 	m_fenceController = fenceController;
-	m_rigidBodyDeque = std::deque<std::shared_ptr<btRigidBody>>();
+	m_rigidBodyDeque = std::deque<std::shared_ptr<btRigidBody> >();
 }
 
 void FenceModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)

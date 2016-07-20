@@ -16,7 +16,7 @@ namespace troen
 	class HUDView : public AbstractView
 	{
 	public:
-		HUDView(const int i, const std::vector<std::shared_ptr<Player>>& players);
+		HUDView(const int i, const std::vector<std::shared_ptr<Player> >& players);
 
 		//
 		// initialization
@@ -29,7 +29,7 @@ namespace troen
 		//
 		void updateRadarCamera();
 		void resize(const int width, const int height);
-		void updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage>>& messages);
+		void updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage> >& messages);
 
 		//
 		// texts
@@ -49,7 +49,7 @@ namespace troen
 		void setKillCountText(const int i, const std::string& playerName, const int killCount);
 		void toggleVisibility();
 	private:
-		osg::ref_ptr<osg::Camera> createHUD(const std::vector<std::shared_ptr<Player>>& players);
+		osg::ref_ptr<osg::Camera> createHUD(const std::vector<std::shared_ptr<Player> >& players);
 		osg::ref_ptr<osg::Camera> createRadar(const int index);
 
 		void resizeHudComponents(const int width, const int height);

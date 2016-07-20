@@ -23,7 +23,7 @@ namespace troen
 		protected:
 			osg::ref_ptr<BikeInputState> m_bikeInputState;
 			bool m_newPosition;
-			std::shared_ptr<QQueue<btTransform>> m_newFencePositions;
+			std::shared_ptr<QQueue<btTransform> > m_newFencePositions;
 			std::shared_ptr<QMutex> m_fenceBufferMutex;
 		};
 	}

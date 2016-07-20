@@ -301,12 +301,12 @@ bool TroenGameBuilder::destroy()
 	input::Gamepad::clearPorts();
 #endif
 	input::GamepadPS4::reset();
-	t->m_statsHandler = nullptr;
+	t->m_statsHandler = NULL;
 
 	t->m_physicsWorld.reset();
 	t->m_gameLogic.reset();
 
-	t->m_rootNode = nullptr;
+	t->m_rootNode = NULL;
 	t->m_levelController.reset();
 
 	for (auto player : t->m_players)

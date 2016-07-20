@@ -21,6 +21,8 @@
 #include "../input/gamepadps4.h"
 #include "../input/ai.h"
 #include "../input/pollingdevice.h"
+#include "../interpolate.h"
+
 
 #include "../resourcepool.h"
 #include "../sound/audiomanager.h"
@@ -38,16 +40,16 @@ BikeController::BikeController(
 	const btTransform initialPosition,
 	ResourcePool* resourcePool) :
 	AbstractController(),
+	m_turboInitiated(false),
 	m_player(player),
-	m_keyboardHandler(nullptr),
-	m_pollingThread(nullptr),
+	m_keyboardHandler(NULL),
+	m_pollingThread(NULL),
 	m_initialTransform(initialPosition),
 	m_state(BIKESTATE::WAITING),
 	m_speed(0),
-	m_turboInitiated(false),
 	m_timeOfLastCollision(-1),
 	m_respawnTime(-1),
-	m_lastFenceCollision(std::make_pair<float, FenceController*>(0, nullptr))
+	m_lastFenceCollision(std::make_pair<float, FenceController*>(0, NULL))
 {
 	m_view = m_bikeView = std::make_shared<BikeView>(player->color(), resourcePool);
 
@@ -58,7 +60,7 @@ BikeController::BikeController(
 
 void BikeController::reset()
 {
-	if (m_pollingThread != nullptr)
+	if (m_pollingThread != NULL)
 		m_pollingThread->setVibration(false);
 
 	m_player->fenceController()->removeAllFences();
@@ -83,12 +85,12 @@ void BikeController::rememberFenceCollision(FenceController* fence)
 
 BikeController::~BikeController()
 {
-	if (m_pollingThread != nullptr)
+	if (m_pollingThread != NULL)
 	{
 		m_pollingThread->stop();
 		m_pollingThread->wait();
 	}
-	if (m_keyboardHandler == nullptr)
+	if (m_keyboardHandler == NULL)
 	{
 		delete m_pollingThread;
 	}
@@ -96,11 +98,11 @@ BikeController::~BikeController()
 
 void BikeController::killThread()
 {
-	if (m_pollingThread != nullptr)
+	if (m_pollingThread != NULL)
 	{
 		m_pollingThread->stop();
 		m_pollingThread->wait();
-		m_pollingThread = nullptr;
+		m_pollingThread = NULL;
 	}
 }
 
@@ -225,7 +227,7 @@ void BikeController::attachTrackingCamera(
 	osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*> (viewNode->getChild(0));
 
 	// set the actual node as the track node, not the pat
-	if (hudController != nullptr)
+	if (hudController != NULL)
 		hudController->setTrackNode(pat->getChild(0));
 }
 
@@ -360,7 +362,7 @@ void BikeController::updateModel(const long double gameTime)
 	if (m_turboInitiated)
 		m_turboInitiated = false;
 
-	if (m_pollingThread != nullptr)
+	if (m_pollingThread != NULL)
 	{
 		m_pollingThread->setVibration(m_timeOfLastCollision != -1 && g_gameTime - m_timeOfLastCollision < VIBRATION_TIME_MS);
 	}

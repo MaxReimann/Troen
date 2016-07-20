@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget * parent)
 	QStringList nameFilter("*.ive");
 	QDir directory("data/levels/");
 	QStringList levelFiles = directory.entryList(nameFilter);
-	foreach(QString currentFile, levelFiles) {
+	for (QString currentFile: levelFiles) {
 		// remove .ive from string
 		currentFile.chop(4);
 		m_levelComboBox->addItem(currentFile);
@@ -247,7 +247,9 @@ MainWindow::MainWindow(QWidget * parent)
 
 	// create GameThread and Game
 	m_gameThread = new QThread(this);
-	m_troenGame = new TroenGame(m_gameThread);
+	m_troenGameThread = std::make_shared<GameThread>(m_gameThread);
+	m_troenGame = m_troenGameThread->getTroenGame();
+	// m_troenGame = new TroenGame(m_gameThread);
 
 	connect(m_connectNetworkButton, SIGNAL(clicked()), this, SLOT(connectNetworking()));
 	connect(m_gameStartButton, SIGNAL(clicked()), this, SLOT(prepareGameStart()));
@@ -255,7 +257,7 @@ MainWindow::MainWindow(QWidget * parent)
 	connect(m_bikeNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(bikeNumberChanged(int)));
 	connect(m_serverCheckBox, SIGNAL(clicked()), this, SLOT(connectionTypeChanged()));
 
-	connect(this, SIGNAL(startGame(GameConfig)), m_troenGame, SLOT(prepareAndStartGame(const GameConfig&)));
+	connect(this, SIGNAL(startGame(GameConfig)), m_troenGameThread.get(), SLOT(prepareAndStartGame(const GameConfig&)));
 	
 }
 
@@ -299,7 +301,7 @@ void MainWindow::prepareGameStart()
 	GameConfig config = getGameConfig();
 	//TODO: remove ownView checkboxes & replace with spinbox for number of views
 	int i = 0;
-	for (auto ownViewCheckbox : m_ownViewCheckboxes) {
+	for(QCheckBox* ownViewCheckbox : m_ownViewCheckboxes) {
 		config.ownView[i] = ownViewCheckbox->isChecked();
 		i++;
 	}
@@ -460,8 +462,13 @@ void MainWindow::loadSettings()
 {
 	QSettings settings(m_settingsFileName, QSettings::IniFormat);
 
-	std::vector<QColor> initialColors{ QColor(255.0, 0.0, 0.0), QColor(0.0, 255.0, 0.0), QColor(0.0, 0.0, 255.0),
-		QColor(255.0, 255.0, 0.0), QColor(0.0, 255.0, 255.0), QColor(255.0, 0.0, 255.0) };
+	std::vector<QColor> initialColors;
+	initialColors.push_back( QColor(255.0, 0.0, 0.0) );
+	initialColors.push_back( QColor(0.0, 255.0, 0.0) );
+	initialColors.push_back( QColor(0.0, 0.0, 255.0) );
+	initialColors.push_back( QColor(255.0, 255.0, 0.0) );
+	initialColors.push_back( QColor(0.0, 255.0, 255.0) );
+	initialColors.push_back( QColor(255.0, 0.0, 255.0)  );
 
 	m_bikeNumberSpinBox->setValue(settings.value("bikeNumber").toInt());
 	m_timeLimitSpinBox->setValue(settings.value("timeLimit").toInt());

@@ -15,6 +15,9 @@
 #include <vector>
 #include "qcolor.h"
 
+#include <boost/foreach.hpp>
+
+
 //bullet
 #include <btBulletDynamicsCommon.h>
 // troen
@@ -188,8 +191,8 @@ namespace troen
 			
 
 			//players
-			std::vector<std::shared_ptr<NetworkPlayerInfo>> m_players;
-			std::vector<std::shared_ptr<BikeController>> m_localBikeControllers;
+			std::vector<std::shared_ptr<NetworkPlayerInfo> > m_players;
+			std::vector<std::shared_ptr<BikeController> > m_localBikeControllers;
 			std::shared_ptr<BikeModel> m_localBikeModel;
 
 
@@ -199,7 +202,7 @@ namespace troen
 			bool m_gameInitStarted;
 			btTransform m_startPosition;
 			int m_gameID;
-			std::vector<std::shared_ptr<NetworkPlayerInfo>> m_ownPlayersInfo;
+			std::vector<std::shared_ptr<NetworkPlayerInfo> > m_ownPlayersInfo;
 			bool m_gameStarted;
 			struct bikeUpdateMessage receivedUpdateMessage, lastSentMessage, messageToSend;
 			struct bikeStatusMessage receivedBikeStatusMessage, bikeStatusMessageToSend;
@@ -233,9 +236,9 @@ namespace troen
 	}
 
 	template <typename T>
-	bool is_in(const T& val, const std::initializer_list<T>& list)
+	bool is_in(const T& val, const std::vector<T>& list)
 	{
-		for (const auto& i : list) {
+		for(const T& i : list) {
 			if (val == i) {
 				return true;
 			}

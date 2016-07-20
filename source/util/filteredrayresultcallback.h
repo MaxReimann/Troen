@@ -18,7 +18,7 @@ public:
 
 	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
 	{
-		if (proxy0 == nullptr)
+		if (proxy0 == NULL)
 			return false;
 
 		void* collisionPartner = proxy0->m_clientObject;

@@ -3,7 +3,7 @@
 
 using namespace troen;
 
-SampleOSGViewer::SampleOSGViewer(osg::GraphicsContext* context /*= nullptr*/)
+SampleOSGViewer::SampleOSGViewer(osg::GraphicsContext* context /*= NULL*/)
 {
 	setThreadingModel(osgViewer::ViewerBase::ThreadingModel::ThreadPerContext);
 }

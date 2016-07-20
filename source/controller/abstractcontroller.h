@@ -15,7 +15,7 @@ namespace troen
 			AbstractController();
 
 			virtual osg::ref_ptr<osg::Group> getViewNode();
-			virtual std::vector<std::shared_ptr<btRigidBody>> getRigidBodies();
+			virtual std::vector<std::shared_ptr<btRigidBody> > getRigidBodies();
 
 		protected:
 			std::shared_ptr<AbstractView> m_view;

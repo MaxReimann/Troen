@@ -21,8 +21,8 @@ namespace troen
 		protected:
 			osg::ref_ptr<BikeInputState> m_bikeInputState;
 
-			bool m_pollingEnabled = false;
-			bool m_vibrationEnabled = false;
+			bool m_pollingEnabled;
+			bool m_vibrationEnabled;
 		};
 	}
 }

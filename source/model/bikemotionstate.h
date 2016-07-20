@@ -45,7 +45,7 @@ namespace troen
 
 
 		virtual void setWorldTransform(const btTransform &worldTrans) {
-			if (nullptr == m_visibleObj)
+			if (NULL == m_visibleObj)
 				return; // silently return before we set a node
 			btVector3 pos = worldTrans.getOrigin();
 			m_currentPosition = osg::Vec3(pos.x(), pos.y(), pos.z());

@@ -190,7 +190,7 @@ void Player::setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNo
 	playerNode()->addChild(reflection()->getReflectionCameraGroup());
 }
 
-void Player::createHUDController(const std::vector<std::shared_ptr<Player>>& players)
+void Player::createHUDController(const std::vector<std::shared_ptr<Player> >& players)
 {
 	if (!hasGameView()) return;
 
@@ -215,10 +215,10 @@ Player::~Player()
 	//
 	// osg elements
 	//
-	m_viewer = nullptr;
-	m_gameView = nullptr;
-	m_playerNode = nullptr;
-	m_reflection = nullptr;
+	m_viewer = NULL;
+	m_gameView = NULL;
+	m_playerNode = NULL;
+	m_reflection = NULL;
 }
 
 float Player::increaseHealth(float diff)

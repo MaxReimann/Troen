@@ -35,7 +35,8 @@ void GamepadPS4::reset()
 	// hid_free_enumeration(allHidDevices);
 }
 
-GamepadPS4::GamepadPS4(osg::ref_ptr<BikeInputState> bikeInputState, osg::Vec3 color) : PollingDevice(bikeInputState)
+GamepadPS4::GamepadPS4(osg::ref_ptr<BikeInputState> bikeInputState, osg::Vec3 color) : PollingDevice(bikeInputState),
+	m_vibrate(false), m_serialNumber(NULL)
 {
 	for (int i = 0; i < sizeof(m_writeBuffer); i++) {
 		m_writeBuffer[i] = 0;
@@ -235,7 +236,7 @@ bool GamepadPS4::checkConnection(){
 	// 	m_serialNumber = GamepadPS4::getFreeDeviceSN();
 	// }
 
-	// if (_controller || (m_serialNumber && (_controller = hid_open(VID, PID, m_serialNumber)) != nullptr))
+	// if (_controller || (m_serialNumber && (_controller = hid_open(VID, PID, m_serialNumber)) != NULL))
 	// 	return true;
 
 	return false;

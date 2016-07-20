@@ -26,7 +26,7 @@ namespace troen
 		} GAMESTATE;
 
 		GameLogic(TroenGame* game, const int timeLimit = 5);
-		void attachPhysicsWorld(std::shared_ptr<PhysicsWorld>& physicsWorld);
+		void attachPhysicsWorld(std::weak_ptr<PhysicsWorld>& physicsWorld);
 
 		//
 		// stepping

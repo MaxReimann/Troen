@@ -23,7 +23,7 @@ namespace troen
 			TURBOSTRIP, HEALTHUP, RADAR, BENDEDVIEWS, COUNT
 		};
 
-		void triggerOn(BikeController* bikeController, GameLogic* gamelogic = nullptr);
+		void triggerOn(BikeController* bikeController, GameLogic* gamelogic = NULL);
 
 	public slots:
 		void hideFencesInRadarForPlayer();

@@ -37,7 +37,7 @@ ItemController::ItemController(btVector3 position, std::weak_ptr<PhysicsWorld> w
 }
 
 
-void ItemController::triggerOn(BikeController* bikeController, GameLogic* gamelogic/*= nullptr*/)
+void ItemController::triggerOn(BikeController* bikeController, GameLogic* gamelogic/*= NULL*/)
 {
 
 	switch (m_type)

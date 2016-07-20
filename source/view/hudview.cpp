@@ -23,9 +23,9 @@ using namespace troen;
 #define mod(a, m) \
 	((a)-(m)* (static_cast<int>((a) / (m)) - ((a) < 0 ? 1 : 0)))
 
-HUDView::HUDView(const int i, const std::vector<std::shared_ptr<Player>>& players) :
+HUDView::HUDView(const int i, const std::vector<std::shared_ptr<Player> >& players) :
 AbstractView(),
-m_trackNode(nullptr),
+m_trackNode(NULL),
 m_healthText(new osgText::Text()),
 m_speedText(new osgText::Text()),
 m_pointsText(new osgText::Text()),
@@ -42,7 +42,7 @@ void HUDView::toggleVisibility()
 	m_radarCamera->setNodeMask(~m_radarCamera->getNodeMask());
 }
 
-osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<Player>>& players)
+osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<Player> >& players)
 {
 	// create a camera to set up the projection & 
 	// model view matrices and the subgraph to draw in the HUD
@@ -286,7 +286,7 @@ private:
 
 void HUDView::updateRadarCamera()
 {
-        osg::Matrixd* worldCoordinateMatrix = nullptr;
+        osg::Matrixd* worldCoordinateMatrix = NULL;
 		getWorldCoordOfNodeVisitor ncv;
         
 		// fail silently, in case no node is attached
@@ -382,7 +382,7 @@ void HUDView::setKillCountText(const int i, const std::string& playerName , cons
 	m_killCountTexts[i]->setText(playerName + ": " + std::to_string(killCount));
 }
 
-void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage>>& messages)
+void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage> >& messages)
 {
 	for (size_t i = 0; i < 4; i++)
 	{

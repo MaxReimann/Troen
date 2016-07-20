@@ -20,9 +20,10 @@
 
 // #define OMEGA_NO_GL_HEADERS
 // #include <omega.h>
+
 // #include <omegaToolkit.h>
 // #include <omegaOsg/omegaOsg.h>
-
+#include "omegascene.h"
 
 
 #define MAX_BIKES 6
@@ -60,7 +61,7 @@ namespace troen
 		friend class GameLogic;
 
 	public:
-		TroenGame(QThread* thread = nullptr);
+		TroenGame(QThread* thread = NULL);
 		//
 		// getters
 		//
@@ -76,12 +77,12 @@ namespace troen
 		{
 			return m_levelController;
 		};
-		std::vector<std::shared_ptr<Player>> players()
+		std::vector<std::shared_ptr<Player> > players()
 			{ return m_players; };
 		osg::ref_ptr<SkyDome> skyDome()
 			{ return m_skyDome; };
 		ResourcePool* resourcePool(){ return &m_resourcePool; };
-
+		void prepareGame(const GameConfig& config);
 		//
 		// Events
 		//
@@ -104,13 +105,16 @@ namespace troen
 		void enableBendedViews() { m_deformationEnd = BENDED_VIEWS_ACTIVATED; }
 		void disableBendedViews() { m_deformationEnd = BENDED_VIEWS_DEACTIVATED; }
 		
-		double m_deformationEnd = BENDED_VIEWS_DEACTIVATED;
+		double m_deformationEnd;
 
 		void toggleHUDVisibility();
 
+		osg::ref_ptr<osg::Group> getRootNode() { return m_rootNode; }
+		osg::ref_ptr<osg::Group> getSceneNode() { return m_sceneNode; }
+
 
 	public slots:
-		void prepareAndStartGame(const GameConfig& config);
+		// void prepareAndStartGame(const GameConfig& config);
 		bool synchronizeGameStart(GameConfig config);
 		bool isNetworking();
 		std::string setupClient(QString playerName, std::string connectAddr = "127.0.0.1");
@@ -148,24 +152,23 @@ namespace troen
 		//
 		// Game Components
 		//
-		std::shared_ptr<GameConfig>					m_gameConfig;
-		std::shared_ptr<LevelController>			m_levelController;
-		std::vector<std::shared_ptr<Player>>		m_players;
-		std::vector<std::shared_ptr<Player>>		m_playersWithView;
-		std::shared_ptr<util::ChronoTimer>			m_gameloopTimer;
-		std::shared_ptr<util::ChronoTimer>			m_gameTimer;
-		std::shared_ptr<PhysicsWorld>				m_physicsWorld;
-		std::shared_ptr<GameLogic>					m_gameLogic;
-		std::shared_ptr<sound::AudioManager>		m_audioManager;
-		std::shared_ptr<networking::ServerManager>  m_ServerManager;
-		std::shared_ptr<networking::ClientManager>  m_ClientManager;
+		std::shared_ptr<GameConfig>							m_gameConfig;
+		std::shared_ptr<LevelController>					m_levelController;
+		std::vector<std::shared_ptr<Player> >				m_players;
+		std::vector<std::shared_ptr<Player> >				m_playersWithView;
+		std::shared_ptr<util::ChronoTimer>					m_gameloopTimer;
+		std::shared_ptr<util::ChronoTimer>					m_gameTimer;
+		std::shared_ptr<PhysicsWorld>						m_physicsWorld;
+		std::shared_ptr<GameLogic>							m_gameLogic;
+		std::shared_ptr<sound::AudioManager>				m_audioManager;
+		std::shared_ptr<networking::ServerManager>  		m_ServerManager;
+		std::shared_ptr<networking::ClientManager>  		m_ClientManager;
+		// std::shared_ptr<omega::Application<TroenOmegaScene> >	m_omegaApp;
 
 		ResourcePool m_resourcePool;
 
 		// BendedViews
 		SplineDeformationRendering* m_deformationRendering;
 
-		// Startup Options
-		QThread* m_gameThread;
 	};
 }

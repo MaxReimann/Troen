@@ -7,7 +7,7 @@ namespace troen
 	class SampleOSGViewer : public osgViewer::CompositeViewer
 	{
 	public:
-		SampleOSGViewer(osg::GraphicsContext* context = nullptr);
+		SampleOSGViewer(osg::GraphicsContext* context = NULL);
 		virtual ~SampleOSGViewer();
 	};
 }
