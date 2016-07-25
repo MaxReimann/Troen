@@ -107,17 +107,17 @@ m_hasGameView(config->ownView[id])
 		m_gameView->addEventHandler(game->gameEventHandler());
 		m_gameView->addEventHandler(game->statsHandler());
 
-#ifdef WIN32
-		if (config->fullscreen)
-			m_gameView->apply(new osgViewer::SingleScreen(0));
-		else
-			m_gameView->apply(new osgViewer::SingleWindow(400, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
-#else
-		if (config->fullscreen)
-			m_gameView->setUpViewOnSingleScreen(0);
-		else
-			m_gameView->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-#endif
+// #ifdef WIN32
+// 		if (config->fullscreen)
+// 			m_gameView->apply(new osgViewer::SingleScreen(0));
+// 		else
+// 			m_gameView->apply(new osgViewer::SingleWindow(400, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
+// #else
+// 		if (config->fullscreen)
+// 			m_gameView->setUpViewOnSingleScreen(0);
+// 		else
+// 			m_gameView->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+// #endif
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

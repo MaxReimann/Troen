@@ -85,147 +85,6 @@ void TroenGame::prepareGame(const GameConfig& gameConfig)
 	// startGameLoop();
 }
 
-void TroenGame::startGameLoop()
-{
-	// adaptive game loop from here:
-	// http://entropyinteractive.com/2011/02/game-engine-design-the-game-loop/
-
-	// INITIALIZATION
-	m_builder = new TroenGameBuilder(this);
-	m_builder->build();
-
-	if (m_gameConfig->useDebugView)
-		m_sceneNode->addChild(m_physicsWorld->m_debug->getSceneGraph());
-
-	if (m_gameConfig->fullscreen)
-		setupForFullScreen();
-
-	m_gameloopTimer->start();
-	m_gameTimer->start();
-	m_gameTimer->pause();
-
-	if (isNetworking())
-	{
-		getNetworkManager()->setLocalGameReady();
-		getNetworkManager()->waitOnAllPlayers(); //blocking call
-	}
-
-	// GAME LOOP VARIABLES
-	long double nextTime = m_gameloopTimer->elapsed();
-	const double minMillisecondsBetweenFrames = 16.7; // vSync to 60 fps
-	const double maxMillisecondsBetweenFrames = 4 * minMillisecondsBetweenFrames + 1;
-	int skippedFrames = 0;
-	const int maxSkippedFrames = 4;
-
-	bool nearPlaneAdapted = false;
-
-	// GAME LOOP
-	// - AI
-	// - network
-	// - checkForUserInput and updateModels
-	// - physics + updateViews
-	// - render;
-	m_deformationRendering->setDeformationStartEnd(0.1, 100000);
-
-
-	// terminates when first viewer is closed
-	while (!m_players[0]->viewer()->done())
-	{
-		g_gameLoopTime = m_gameloopTimer->elapsed();
-		g_gameTime = m_gameTimer->elapsed();
-
-		QCoreApplication::processEvents();
-
-		// are we significantly behind? if yes, "resync", force rendering
-		if ((g_gameLoopTime - nextTime) > maxMillisecondsBetweenFrames)
-			nextTime = g_gameLoopTime;
-		// is it time to render the next frame?
-		if (m_gameConfig->testPerformance || g_gameLoopTime >= nextTime)
-		{
-			// assign the time for the next update
-			nextTime += minMillisecondsBetweenFrames;
-
-			// LOOP REALLY STARTS HERE:
-			m_gameLogic->step(g_gameLoopTime, g_gameTime);
-			if (!m_gameTimer->paused())
-			{
-				for (auto player : m_players)
-				{
-					player->update(g_gameTime);
-				}
-				m_physicsWorld->stepSimulation(g_gameTime);
-				m_levelController->update();
-			}
-
-
-
-			if (isNetworking())
-				getNetworkManager()->update(g_gameTime);
-
-
-			m_audioManager->Update(g_gameLoopTime / 1000);
-			m_audioManager->setMotorSpeed(m_players[0]->bikeController()->speed());
-
-			// Hack: normalize and use the speed to control the deformation
-			float bikeSpeed = m_players[0]->bikeController()->speed();
-			float maxSpeed = 400.f;
-
-			handleBending(double(bikeSpeed / maxSpeed));
-
-
-			if (m_postProcessing)
-				m_postProcessing->setBeat(m_audioManager->getTimeSinceLastBeat());
-
-			// do we have extra time (to draw the frame) or did we skip too many frames already?
-			if (g_gameLoopTime < nextTime || (skippedFrames > maxSkippedFrames))
-			{
-				for (auto player : m_playersWithView)
-				{
-					player->hudController()->update(
-						g_gameLoopTime,
-						g_gameTime,
-						m_gameConfig->timeLimit,
-						m_gameLogic->getGameState(),
-						m_players);
-				}
-
-				for (auto player : m_playersWithView)
-				{
-					player->viewer()->frame();
-				}
-				// TODO: find a way to eleminate this workaround
-				// doesn't work if it's executed earlier
-				if (!nearPlaneAdapted)
-				{
-					for (auto player : m_playersWithView)
-					{
-						fixCulling(player->gameView());
-					}
-				}
-				skippedFrames = 0;
-			}
-			else
-				skippedFrames++;
-		}
-		else // WAIT
-		{
-			// calculate the time to sleep
-			long double sleepTime = (nextTime - g_gameLoopTime);
-			// if (sleepTime > 0)	// sanity check, sleep until nextTime
-			// if (!m_gameConfig->testPerformance) m_gameThread->msleep(sleepTime);
-		}
-	}
-
-	if (m_gameConfig->fullscreen)
-		returnFromFullScreen();
-
-	// SHUTDOWN
-	m_builder->destroy();
-	delete m_builder;
-}
-
-
-
 void TroenGame::stepGameOmega()
 {
 	static bool firstLoop = true;
@@ -309,10 +168,10 @@ void TroenGame::stepGameOmega()
 					m_players);
 			}
 
-			for (auto player : m_playersWithView)
-			{
-				player->viewer()->frame();
-			}
+			// for (auto player : m_playersWithView)
+			// {
+			// 	player->viewer()->frame();
+			// }
 			// TODO: find a way to eleminate this workaround
 			// doesn't work if it's executed earlier
 			if (!nearPlaneAdapted)
@@ -337,7 +196,16 @@ void TroenGame::stepGameOmega()
 }
 
 
+void TroenGame::shutdown()
+{
+	
+	if (m_gameConfig->fullscreen)
+		returnFromFullScreen();
 
+	// SHUTDOWN
+	m_builder->destroy();
+	delete m_builder;
+}
 
 
 void TroenGame::fixCulling(osg::ref_ptr<osgViewer::View> view)

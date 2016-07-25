@@ -112,6 +112,8 @@ namespace troen
 		osg::ref_ptr<osg::Group> getRootNode() { return m_rootNode; }
 		osg::ref_ptr<osg::Group> getSceneNode() { return m_sceneNode; }
 
+		void shutdown();
+
 
 	public slots:
 		// void prepareAndStartGame(const GameConfig& config);

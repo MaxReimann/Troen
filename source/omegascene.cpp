@@ -1,19 +1,10 @@
 #include "omegascene.h"
-
+#include <osgDB/WriteFile>
+#include "gamethread.h"
+#include "troengame.h"
 
 using namespace troen;
 
-
-void TroenOmegaScene::setRootNode(osg::ref_ptr<osg::Group> root)
-{
-    m_root = root;
-}
-
-
-void TroenOmegaScene::setSceneNode(osg::ref_ptr<osg::Group> scene)
-{
-    m_scene = scene;
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,9 +27,16 @@ void TroenOmegaScene::initialize()
         // sModelSize = omega::Config::getFloatValue("size", sscene, sModelSize);
     }
 
+    m_troenGame = GameThread::getInstance()->getTroenGame();
+
+
+
+
+    // osgDB::writeNodeFile(*(m_scene).get(), "saved.osg");
+
     // Create an omegalib scene node and attach the osg node to it. This is used to interact with the 
     // osg object through omegalib interactors.
-    omegaOsg::OsgSceneObject* oso = new omegaOsg::OsgSceneObject(m_scene);
+    omegaOsg::OsgSceneObject* oso = new omegaOsg::OsgSceneObject(m_troenGame->getSceneNode());
     mySceneNode = new omega::SceneNode(getEngine());
     mySceneNode->addComponent(oso);
     getEngine()->getScene()->addChild(mySceneNode);
@@ -64,7 +62,7 @@ void TroenOmegaScene::initialize()
     }
 
     // Set the osg node as the root node
-    myOsg->setRootNode(m_root);
+    myOsg->setRootNode(m_troenGame->getRootNode());
 
     // root->addChild(ls);
 }

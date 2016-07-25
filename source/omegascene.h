@@ -12,6 +12,7 @@
 
 
 
+
 // #include "troengame.h"
 
 namespace troen
@@ -31,16 +32,13 @@ namespace troen
         virtual void update(const omega::UpdateContext& context);
         virtual void handleEvent(const omega::Event& evt) {}
 
-        void setRootNode(osg::ref_ptr<osg::Group> root);
-        void setSceneNode(osg::ref_ptr<osg::Group> scene);
 
     private:
 
         omegaOsg::OsgModule* myOsg;
         omega::SceneNode* mySceneNode;
         omega::Actor* myInteractor;
-        osg::ref_ptr<osg::Group> m_root;
-        osg::ref_ptr<osg::Group> m_scene;
+        TroenGame *m_troenGame;
 
 
 

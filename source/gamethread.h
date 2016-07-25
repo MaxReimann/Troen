@@ -21,11 +21,14 @@ namespace troen
     class GameThread : public QObject
     {
         Q_OBJECT
+        static GameThread* instance;
     public:
 
         GameThread(QThread* thread = NULL);
 
         TroenGame* getTroenGame() {return m_troenGame.get();}
+
+        static GameThread* getInstance() {return GameThread::instance;}
 
 
     public slots:
@@ -37,7 +40,7 @@ namespace troen
 
         std::shared_ptr<TroenGame> m_troenGame;
         std::shared_ptr<omega::Application<TroenOmegaScene> > m_omegaApp;
-        TroenOmegaScene* m_gameModule;
+
     };
 
 }
