@@ -31,6 +31,10 @@ namespace troen
         virtual void initialize();
         virtual void update(const omega::UpdateContext& context);
         virtual void handleEvent(const omega::Event& evt) {}
+        void updateOmegaCamera(const osg::Camera* cam);
+
+        TroenGame* getTroenGame() { return m_troenGame;}
+        void registerCorrectPath();
 
 
     private:
@@ -38,7 +42,9 @@ namespace troen
         omegaOsg::OsgModule* myOsg;
         omega::SceneNode* mySceneNode;
         omega::Actor* myInteractor;
-        TroenGame *m_troenGame;
+        // TroenGame *m_troenGame;
+
+        TroenGame* m_troenGame; 
 
 
 

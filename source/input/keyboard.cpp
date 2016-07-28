@@ -25,6 +25,7 @@ bool Keyboard::handle(const osgGA::GUIEventAdapter& eventAdapter, osgGA::GUIActi
 		int key = eventAdapter.getKey();
 		if (key == m_keys[0])
 		{
+			std::cout << "up pressed" << std::endl;
 			m_upPressed = true;
 			return false;
 		}
@@ -94,6 +95,88 @@ bool Keyboard::handle(const osgGA::GUIEventAdapter& eventAdapter, osgGA::GUIActi
 		return false;
 	}
 }
+
+
+// bool Keyboard::handle(omega::Event& event)
+// {
+// 	switch (event.getType())
+// 	{
+// 		case(omega::Event::Down) :
+// 		{
+// 			int key = eventAdapter.getKey();
+// 			if (key == m_keys[0])
+// 			{
+// 				std::cout << "up pressed" << std::endl;
+// 				m_upPressed = true;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[1])
+// 			{
+// 				m_leftPressed = true;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[2])
+// 			{
+// 				m_downPressed = true;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[3])
+// 			{
+// 				m_rightPressed = true;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[4])
+// 			{
+// 				m_handbrakePressed = 1.0;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[5])
+// 			{
+// 				m_turboPressed = true;
+// 				return false;
+// 			}
+// 			return false;
+// 		}
+// 		case(osgGA::GUIEventAdapter::KEYUP) :
+// 		{
+// 			int key = eventAdapter.getKey();
+// 			if (key == m_keys[0])
+// 			{
+// 				m_upPressed = false;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[1])
+// 			{
+// 				m_leftPressed = false;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[2])
+// 			{
+// 				m_downPressed = false;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[3])
+// 			{
+// 				m_rightPressed = false;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[4])
+// 			{
+// 				m_handbrakePressed = 0.0;
+// 				return false;
+// 			}
+// 			else if (key == m_keys[5])
+// 			{
+// 				m_turboPressed = false;
+// 				return false;
+// 			}
+// 			return false;
+// 		}
+// 	default:
+// 		return false;
+// 	}
+// }
+
 
 void Keyboard::run()
 {

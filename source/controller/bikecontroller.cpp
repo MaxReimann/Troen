@@ -31,6 +31,11 @@
 
 #include "../util/filteredrayresultcallback.h"
 
+#define OMEGA_NO_GL_HEADERS
+#include <omega.h>
+
+
+
 
 using namespace troen;
 
@@ -231,13 +236,21 @@ void BikeController::attachTrackingCamera(
 		hudController->setTrackNode(pat->getChild(0));
 }
 
-void BikeController::attachTrackingCamera(osg::ref_ptr<NodeFollowCameraManipulator>& manipulator)
+void BikeController::attachTrackingCamera(NodeFollowCameraManipulator* manipulator)
 {
 	osg::ref_ptr<osg::Group> viewNode = m_bikeView->getNode();
 	osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*> (viewNode->getChild(0));
 
+
+	m_cameraController = 
+		std::make_shared<ManipulatorController>( omega::Engine::instance()->getDefaultCamera() );
+
+
 	// set the actual node as the track node, not the pat
-	manipulator->setTrackNode(pat->getChild(0));
+	m_cameraController->setManipulator(manipulator, pat->getChild(0));
+	// manipulator->setTrackNode(pat->getChild(0));
+
+
 
 	// set the bikeInputState
 	manipulator->setBikeInputState(m_bikeInputState);

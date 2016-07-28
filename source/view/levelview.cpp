@@ -106,6 +106,11 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
 	osg::ref_ptr<osg::Group> floorsGroup = new osg::Group();
 
 	osg::ref_ptr<osg::Node> floors = osgDB::readNodeFile("data/models/floor_highres.ive");
+	if (!floors.get()){
+		std::cout << "ERROR: could not read data/models/floor_highres.ive" << std::endl;
+		throw;
+	}
+
 	floors->setNodeMask(CAMERA_MASK_MAIN);
 
 	floors->setName("floorsNode");
@@ -125,7 +130,7 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
 
 	osg::ref_ptr<osg::Group> radarFloors = constructRadarElementsForBoxes(m_model->getFloors());
 	radarFloors->setNodeMask(CAMERA_MASK_RADAR);
-	floorsGroup->addChild(radarFloors);
+	// floorsGroup->addChild(radarFloors); //TODO: Comment back in
 
 
   return floorsGroup;
@@ -178,7 +183,7 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 
 	osg::ref_ptr<osg::Group> radarObstacles = constructRadarElementsForBoxes(m_model->getObstacles());
 	radarObstacles->setNodeMask(CAMERA_MASK_RADAR);
-	obstaclesGroup->addChild(radarObstacles);
+	// obstaclesGroup->addChild(radarObstacles); //TODO:comment back in
 	obstaclesGroup->addChild(mainGroup);
 
 	std::cout << "Obstacles radius" << obstaclesGroup->getBound().radius() << std::endl;

@@ -102,6 +102,7 @@ namespace troen
 	class SkyDome;
 	class PostProcessing;
 	class NodeFollowCameraManipulator;
+	class ManipulatorController;
 	class Reflection;
 	class ResourcePool;
 	class SplineDeformationRendering;

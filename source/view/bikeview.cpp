@@ -36,7 +36,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	osg::Quat rotationQuat(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
 	initialTransform.makeRotate(rotationQuat);
 
-#ifndef true
+#if true
 	initialTransform *= initialTransform.scale(BIKE_VIEW_SCALE_FACTORS);
 	initialTransform *= initialTransform.translate(BIKE_VIEW_TRANSLATE_VALUES);
 
@@ -97,8 +97,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_pat->setName("bikeGroup");
 
 
-#endif
-#ifdef false
+#else
 	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
 	matrixTransform->setNodeMask(CAMERA_MASK_MAIN);
 
@@ -127,7 +126,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	matrixTransform->setName("bikeGroup");
 	matrixTransform->addChild(debugNode);
 
-	pat->addChild(matrixTransform);
+	m_pat->addChild(matrixTransform);
 #endif
 
 	// create box for radar
@@ -146,8 +145,8 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	radarMatrixTransform->addChild(mark_node);
 	radarMatrixTransform->setNodeMask(CAMERA_MASK_RADAR);
 
-	m_pat->addChild(radarMatrixTransform);
-	m_pat->addChild(PlayerMarker(color).getNode());
+	// m_pat->addChild(radarMatrixTransform);
+	// m_pat->addChild(PlayerMarker(color).getNode()); //TODO: comment back in
 	m_node->addChild(m_pat);
 }
 
@@ -257,5 +256,5 @@ void BikeView::createPlayerMarker(osg::Vec3 color)
 {
 	//PlayerMarker *marker = new PlayerMarker(color)
 	m_playermarkerNode = PlayerMarker(color).getNode();
-	m_pat->addChild(m_playermarkerNode);
+	// m_pat->addChild(m_playermarkerNode);
 }

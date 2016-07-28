@@ -53,7 +53,7 @@ namespace troen
 		// osg related
 		//
 		bool hasGameView()							{ return m_hasGameView; }
-		osg::ref_ptr<SampleOSGViewer> viewer()		{ return m_viewer; };
+		// osg::ref_ptr<SampleOSGViewer> viewer()		{ return m_viewer; };
 		osg::ref_ptr<osgViewer::View> gameView()	{ return m_gameView; };
 		osg::ref_ptr<osg::Group> playerNode()		{ return m_playerNode; };
 		std::shared_ptr<Reflection> reflection()	{ return m_reflection; };
@@ -75,6 +75,7 @@ namespace troen
 		float increaseHealth(const float diff);
 		float increasePoints(const float diff);
 		void update(int g_gameTime);
+		void createCameraManipulator();
 
 
 		void setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNode);
@@ -99,12 +100,13 @@ namespace troen
 		std::shared_ptr<BikeController>	m_bikeController;
 		std::shared_ptr<FenceController> m_fenceController;
 		std::shared_ptr<HUDController>	m_HUDController;
+		osg::ref_ptr<NodeFollowCameraManipulator> m_manipulator;
 
 		//
 		// osg elements
 		//
 		bool							m_hasGameView;
-		osg::ref_ptr<SampleOSGViewer>	m_viewer;
+		// osg::ref_ptr<SampleOSGViewer>	m_viewer;
 		osg::ref_ptr<osgViewer::View>	m_gameView;
 		osg::ref_ptr<osg::Group>		m_playerNode;
 		std::shared_ptr<Reflection>		m_reflection;

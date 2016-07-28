@@ -33,12 +33,13 @@ m_countdownText(new osgText::Text()),
 m_timeText(new osgText::Text()),
 m_playerColor(osg::Vec4(players[i]->color(),1))
 {
-	m_node->addChild(createHUD(players));
-	m_node->addChild(createRadar(i));
+	// m_node->addChild(createHUD(players));
+	// m_node->addChild(createRadar(i));
 }
 
 void HUDView::toggleVisibility()
 {
+	return;
 	m_radarCamera->setNodeMask(~m_radarCamera->getNodeMask());
 }
 
@@ -175,6 +176,7 @@ void HUDView::initializeText(
 
 void HUDView::resize(const int width,const int height)
 {
+	return;
 	osg::ref_ptr<osg::Viewport> hudViewport = new osg::Viewport(0, 0, width, height);
 	m_camera->setViewport(hudViewport);
 	resizeHudComponents(width, height);
@@ -189,6 +191,7 @@ void HUDView::resize(const int width,const int height)
 
 void HUDView::resizeHudComponents(const int width, const int height)
 {
+	return;
 	m_speedText->setCharacterSize(height / 15);
 	m_speedText->setFontResolution(height / 15, height / 15);
 
@@ -223,6 +226,7 @@ void HUDView::resizeHudComponents(const int width, const int height)
 
 osg::ref_ptr<osg::Camera> HUDView::createRadar(const int i)
 {
+	return new osg::Camera; //TODO: Remove
 	m_radarCamera = new osg::Camera;
 	m_radarCamera->setClearColor(osg::Vec4(0.0f, 1.f, 0.0f, .5f));
 	m_radarCamera->setRenderOrder(osg::Camera::POST_RENDER);
@@ -242,6 +246,7 @@ osg::ref_ptr<osg::Camera> HUDView::createRadar(const int i)
 
 void HUDView::attachSceneToRadarCamera(osg::Group* scene)
 {
+	return;
 	osg::ref_ptr<osg::Group> hudGroup = new osg::Group;
 
 	osg::StateSet* stateset = hudGroup->getOrCreateStateSet();
@@ -286,6 +291,7 @@ private:
 
 void HUDView::updateRadarCamera()
 {
+	return;
         osg::Matrixd* worldCoordinateMatrix = NULL;
 		getWorldCoordOfNodeVisitor ncv;
         
@@ -320,24 +326,28 @@ void HUDView::setTrackNode(osg::Node* trackNode)
 
 void HUDView::setSpeedText(float speed)
 {
+	return;
 	std::string speedString = std::to_string((int) speed);
 	m_speedText->setText(speedString + " km/h");
 }
 
 void HUDView::setHealthText(float health)
 {
+	return;
 	std::string healthString = std::to_string((int)health);
 	m_healthText->setText(healthString + "%");
 }
 
 void HUDView::setPointsText(float points)
 {
+	return;
 	std::string pointsString = std::to_string((int)points);
 	m_pointsText->setText(pointsString);
 }
 
 void HUDView::setCountdownText(const int countdown)
 {
+	return;
 	if (countdown == -1)
 	{
 		m_countdownText->setText("");
@@ -351,12 +361,14 @@ void HUDView::setCountdownText(const int countdown)
 
 void HUDView::setCountdownText(const std::string text)
 {
+	return;
 	m_countdownText->setText(text);
 }
 
 
 void HUDView::setTimeText(const double gameTime, const int timeLimit)
 {
+	return;
 	int minutes, seconds;
 	if (gameTime <= 0)
 	{
@@ -379,11 +391,13 @@ void HUDView::setTimeText(const double gameTime, const int timeLimit)
 
 void HUDView::setKillCountText(const int i, const std::string& playerName , const int killCount)
 {
+	return;
 	m_killCountTexts[i]->setText(playerName + ": " + std::to_string(killCount));
 }
 
 void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage> >& messages)
 {
+	return;
 	for (size_t i = 0; i < 4; i++)
 	{
 		if (i < messages.size())

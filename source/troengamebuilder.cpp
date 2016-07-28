@@ -168,7 +168,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	}
 
 	//t->m_skyDome->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
-	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
+	// t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
 	t->m_sceneWithSkyboxNode->addChild(t->m_sceneNode);
 
 	t->m_sceneNode->addChild(t->m_levelController->getViewNode());
@@ -177,7 +177,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	for (auto player : t->m_players)
 	{
 		t->m_sceneNode->addChild(player->bikeController()->getViewNode());
-		t->m_sceneNode->addChild(player->fenceController()->getViewNode());
+		// t->m_sceneNode->addChild(player->fenceController()->getViewNode());
 	}
 
 	t->m_sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
@@ -192,21 +192,23 @@ bool TroenGameBuilder::composeSceneGraph()
 	{
 		osg::Group * node = player->hudController()->getViewNode();
 		osg::Group * playerNode = player->playerNode();
-		playerNode->addChild(node);
+		// playerNode->addChild(node); //TODO: comment back in
 	}
 
 
 	if (t->m_gameConfig->usePostProcessing)
 		t->m_rootNode->addChild(t->m_sceneWithSkyboxNode);
 
-	osg::ref_ptr<osg::Group> radarScene = new osg::Group;
 
-	for (auto player : t->m_players)
-	{
-		radarScene->addChild(player->bikeController()->getViewNode());
-		radarScene->addChild(player->fenceController()->getViewNode());
-	}
-	radarScene->addChild(t->m_levelController->getViewNode());
+	// TODO: comment back in
+	// osg::ref_ptr<osg::Group> radarScene = new osg::Group;
+
+	// for (auto player : t->m_players)
+	// {
+	// 	radarScene->addChild(player->bikeController()->getViewNode());
+	// 	radarScene->addChild(player->fenceController()->getViewNode());
+	// }
+	// radarScene->addChild(t->m_levelController->getViewNode());
 
 
  	const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
@@ -219,17 +221,19 @@ bool TroenGameBuilder::composeSceneGraph()
  	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
  	t->m_deformationRendering->setPreset(4);
 
-	for (auto player : t->m_playersWithView)
-	{
-		player->hudController()->attachSceneToRadarCamera(radarScene);
-	}
+ 	//TODO: comment back in
+	// for (auto player : t->m_playersWithView)
+	// {
+	// 	player->hudController()->attachSceneToRadarCamera(radarScene);
+	// }
 
+ 	//TODO: comment back in
 	// disbled optimizer for now, takes a lot of time to execute
-	std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(t->m_rootNode, 		optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
-		optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
-	std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
+	// std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
+	// osgUtil::Optimizer optimizer;
+	// optimizer.optimize(t->m_rootNode, 		optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
+	// 	optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
+	// std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
 
 
 	return true;

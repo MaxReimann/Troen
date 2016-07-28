@@ -46,6 +46,7 @@ endmacro()
 FIND_PATH(OPENSCENEGRAPH_INCLUDE_DIR osg/PositionAttitudeTransform
   HINTS
   $ENV{OSG_DIR}
+  ${OSG_DIR}/include
   $ENV{OSGDIR}
   PATH_SUFFIXES include
   PATHS

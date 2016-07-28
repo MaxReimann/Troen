@@ -34,6 +34,9 @@ namespace troen
 	class GameConfig
 	{
 	public:
+		// GameConfig(GameConfig& config) : numberOfPlayers(config.numberOfPlayers), timeLimit(config.timeLimit),
+		// 	playerInputTypes(config.playerInputTypes), 
+
 		int numberOfPlayers;
 		int timeLimit;
 		int* playerInputTypes;
@@ -111,8 +114,16 @@ namespace troen
 
 		osg::ref_ptr<osg::Group> getRootNode() { return m_rootNode; }
 		osg::ref_ptr<osg::Group> getSceneNode() { return m_sceneNode; }
+		osg::ref_ptr<osg::Group> getBikeNode();
+		osg::ref_ptr<osg::Group> getLevelNode();
+		osg::ref_ptr<osg::Group> getPlayerNode();
+
 
 		void shutdown();
+		void stepGameOmega();
+
+		osg::Camera* getViewCamera();
+
 
 
 	public slots:
@@ -128,7 +139,6 @@ namespace troen
 		// Game Loop
 		//
 		void startGameLoop();
-		void stepGameOmega();
 		void fixCulling(osg::ref_ptr<osgViewer::View> view);
 		void handleBending(double interpolationSkalar);
 

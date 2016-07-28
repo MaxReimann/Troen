@@ -27,6 +27,8 @@ namespace troen
         GameThread(QThread* thread = NULL);
 
         TroenGame* getTroenGame() {return m_troenGame.get();}
+        GameConfig* getGameConfig() { return m_gameConfig;}
+        std::string getStoredLibPaths() { return m_storedLibPaths; }
 
         static GameThread* getInstance() {return GameThread::instance;}
 
@@ -37,9 +39,11 @@ namespace troen
     protected:
         // Startup Options
         QThread* m_gameThread;
+        std::shared_ptr<TroenGame> m_troenGame; 
 
-        std::shared_ptr<TroenGame> m_troenGame;
         std::shared_ptr<omega::Application<TroenOmegaScene> > m_omegaApp;
+        GameConfig* m_gameConfig;
+        std::string m_storedLibPaths;
 
     };
 

@@ -26,6 +26,7 @@
 #include "troengame.h"
 
 
+
 using namespace troen;
 
 // spawn point
@@ -97,15 +98,17 @@ m_hasGameView(config->ownView[id])
 		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
 		m_gameView->setSceneData(m_playerNode);
 
-		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
-			= new NodeFollowCameraManipulator();
 
-		m_bikeController->attachTrackingCamera(manipulator);
+		createCameraManipulator();
+
+
 		m_bikeController->attachGameView(m_gameView);
 
-		m_gameView->setCameraManipulator(manipulator.get());
-		m_gameView->addEventHandler(game->gameEventHandler());
-		m_gameView->addEventHandler(game->statsHandler());
+
+
+		// m_gameView->setCameraManipulator(manipulator.get());
+		// m_gameView->addEventHandler(game->gameEventHandler());
+		// m_gameView->addEventHandler(game->statsHandler());
 
 // #ifdef WIN32
 // 		if (config->fullscreen)
@@ -126,19 +129,19 @@ m_hasGameView(config->ownView[id])
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	if (config->ownView[m_id])
-	{
-		m_viewer = new SampleOSGViewer();
-		m_viewer->addView(m_gameView);
+// 	if (config->ownView[m_id])
+// 	{
+// 		m_viewer = new SampleOSGViewer();
+// 		m_viewer->addView(m_gameView);
 
-#ifdef WIN32
-		// turn of vSync (since we implement
-		// an adaptive gameLoop that syncs itself)
-		osg::ref_ptr<RealizeOperation> operation = new RealizeOperation;
-		m_viewer->setRealizeOperation(operation);
-		m_viewer->realize();
-#endif
-	}
+// #ifdef WIN32
+// 		// turn of vSync (since we implement
+// 		// an adaptive gameLoop that syncs itself)
+// 		osg::ref_ptr<RealizeOperation> operation = new RealizeOperation;
+// 		m_viewer->setRealizeOperation(operation);
+// 		m_viewer->realize();
+// #endif
+// 	}
 
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +206,16 @@ void Player::update(int g_gameTime)
 	bikeController()->updateModel(g_gameTime);
 }
 
+
+void Player::createCameraManipulator()
+{
+		m_manipulator = new NodeFollowCameraManipulator();
+		
+
+		m_bikeController->attachTrackingCamera(m_manipulator.get());
+
+}
+
 Player::~Player()
 {
 	//
@@ -215,7 +228,7 @@ Player::~Player()
 	//
 	// osg elements
 	//
-	m_viewer = NULL;
+	// m_viewer = NULL;
 	m_gameView = NULL;
 	m_playerNode = NULL;
 	m_reflection = NULL;

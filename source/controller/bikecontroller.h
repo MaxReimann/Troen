@@ -39,7 +39,7 @@ namespace troen
 		// initialization & communication
 		//
 		void attachTrackingCamera(std::shared_ptr<HUDController>& hudController);
-        void attachTrackingCamera (osg::ref_ptr<NodeFollowCameraManipulator> &manipulator);
+        void attachTrackingCamera (NodeFollowCameraManipulator* manipulator);
 		void attachWorld(std::shared_ptr<PhysicsWorld> world);
 		void attachGameView(osg::ref_ptr<osgViewer::View> gameView);
 
@@ -120,6 +120,8 @@ namespace troen
 
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
 		std::shared_ptr<input::RemotePlayer> m_remote;
+
+		std::shared_ptr<ManipulatorController> m_cameraController;
 		
 
 

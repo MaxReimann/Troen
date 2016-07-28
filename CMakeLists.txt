@@ -44,9 +44,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Set configuration types
-if(OPTION_LIMIT_CONFIGS)
-	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited Configs" FORCE)
-endif()
+# if(OPTION_LIMIT_CONFIGS)
+# 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited Configs" FORCE)
+# endif()
 
 # Project
 project(${META_PROJECT_NAME} C CXX)
@@ -126,14 +126,17 @@ endforeach(package)
 # OpenGL
 find_package(OpenGL REQUIRED)
 
-# # OpenSceneGraph
-# find_package(OpenSceneGraph REQUIRED)
+
 
 
 #set(OMEGA_BINARY_DIR /local/omegalib/build/bin )
 set(Omegalib_DIR /local/omegalib/build)
 set(OmegaLib_SOURCE_DIR /local/omegalib/)
 find_package(Omegalib)
+
+# # OpenSceneGraph
+# set(OSG_DIR ${Omegalib_DIR}/3rdparty/osg/install)
+# find_package(OpenSceneGraph REQUIRED)
 
 
 # # Bullet
@@ -167,13 +170,11 @@ if(PYTHONLIBS_FOUND)
 	include(${OmegaLib_SOURCE_DIR}/external/UsePython.cmake)
 endif()
 
+set(CYCLOPS_INCLUDE "${OmegaLib_SOURCE_DIR}/modules/cyclops")
+
 #this is set to use from withiin the code to dynamically register the correct libraries
 add_definitions(-DOMEGALIB_BIN_DIR="${Omegalib_DIR}/bin")
 
-# set(OMEGA_LIB_DEPENDS 
-# 	${Omegalib_DIR}/bin/libdisplaySystem_Equalizer.so
-# 	${Omegalib_DIR}/bin/libEqualizerAdmin.so
-# 	)
 
 #################################################
 # SOURCES
@@ -358,16 +359,25 @@ include_directories(
 	${OMEGA_INCLUDE_DIRS}
 	${BULLET_INCLUDES} #from omega
 	${OMEGA_TOOLKIT_INCLUDE_DIRS}
-	#${OMEGA_OSG_INCLUDE_DIRS}
+	${OMEGA_OSG_INCLUDE_DIRS}
+	${OSG_INCLUDES}
 	${FMOD_INCLUDE_DIRS}
 	# ${HIDAPI_INCLUDE_DIRS}
 	${RakNet_INCLUDES}
 	${LIBZEUG_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR} #for the generated files
 	${PYTHON_INCLUDES}
+	# ${CYCLOPS_INCLUDE}
+
+	# ${Omegalib_DIR}/3rdparty/osg/install/include
 )
 
 
+MESSAGE(STATUS ${OMEGA_INCLUDE_DIRS})
+MESSAGE(STATUS "libs:")
+MESSAGE(STATUS ${OMEGA_LIB})
+MESSAGE(STATUS "omegosg libs:")
+MESSAGE(STATUS ${OMEGA_OSG_LIB})
 
 target_link_libraries( ${target}
     ${OPENGL_LIBRARIES}
@@ -382,8 +392,11 @@ target_link_libraries( ${target}
 	${OMEGA_TOOLKIT_LIB}
 	${LIBZEUG_LIBRARIES}
 	${PYTHON_LIBRARIES}
-	${OMEGA_LIB_DEPENDS}
+	# ${CYCLOPS_LIB}	
+
 )
+# message(STATUS ${CYCLOPS_LIB})
+# message(STATUS ${OMEGA_LIB_DEPENDS})
 
 if (WIN32)
 target_link_libraries( ${target}
@@ -398,8 +411,8 @@ endif (WIN32)
 
 # Installation paths
 set(project ${META_PROJECT_NAME})
-if(WIN32)
-    set(INSTALL_ROOT      ".")                         # C:\Programme\<project>
+if(WIN32) 
+	set(INSTALL_ROOT      ".")                         # C:\Programme\<project>
     set(INSTALL_EXAMPLES  "bin")                       # C:\Programme\<project>
     set(INSTALL_DATA      ".")	                       # C:\Programme\<project>
     set(INSTALL_BIN       "bin")                       # C:\Programme\<project>

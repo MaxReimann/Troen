@@ -97,6 +97,13 @@ void TroenGame::stepGameOmega()
 			getNetworkManager()->waitOnAllPlayers(); //blocking call
 		}	
 		firstLoop = false;
+
+
+		// for (auto player : m_playersWithView)
+		// {
+		// 	player->createCameraManipulator();
+		// }
+
 	}
 
 
@@ -395,4 +402,27 @@ void TroenGame::reloadLevel()
 void TroenGame::toggleHUDVisibility()
 {
 	m_players[0]->hudController()->toggleVisibility();
+}
+
+osg::Camera* TroenGame::getViewCamera()
+{
+	for (auto player : players())
+    {
+	    if (player->hasGameView())
+	    {
+	        return player->gameView()->getCamera();
+	    }
+    }
+}
+
+
+osg::ref_ptr<osg::Group> TroenGame::getBikeNode(){
+	 return m_playersWithView[0]->bikeController()->getViewNode(); 
+}
+osg::ref_ptr<osg::Group> TroenGame::getLevelNode(){
+	return m_levelController->getViewNode(); 
+}
+
+osg::ref_ptr<osg::Group> TroenGame::getPlayerNode(){
+	return m_playersWithView[0]->playerNode();
 }

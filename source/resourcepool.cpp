@@ -38,13 +38,28 @@ void ResourcePool::readData()
 		"MG_Player_Baton_EMSS.tga",
 		"MG_Player_Baton_NORM.tga"
 	};
+	// std::cout << libpath << std::endl;
 
 	for (int i = 0; i < m_textureCount; ++i)
 	{
 		const std::string filePath = folder + textureFileNames[i];
 		//m_images[i] = osgDB::readImageFile(filePath);
-		
+
+		//${Omegalib_DIR}/bin
+
+		// osg::ref_ptr<osgDB::Options> options = new osgDB::Options;
+		// auto rw = osgDB::Registry::instance()->getReaderWriterForExtension("tga");
+		 // for (auto libpath : osgDB::Registry::instance()->getLibraryFilePathList())
+
+		// std::cout << osgDB::Registry::instance()->getLibrary("tga")->getFullName () << std::endl;
+		// Registry::instance()->setLibraryFilePathList("./:/usr/local/lib/"); 
+
+
+
 		osg::ref_ptr<osg::Image> img = osgDB::readImageFile(filePath);
+		if (img.get() == NULL)
+			std::cout << "reading image: " << filePath <<  " was not possible" << std::endl;
+		
 		m_images[i] = img.release();
 		
 	}
