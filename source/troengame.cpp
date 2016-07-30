@@ -85,6 +85,17 @@ void TroenGame::prepareGame(const GameConfig& gameConfig)
 	// startGameLoop();
 }
 
+
+void TroenGame::handleEvent(const omega::Event &evt)
+{
+	for (auto player : m_playersWithView)
+	{
+		player->handleEvent(evt);
+	}
+
+	m_gameEventHandler->handleEvent(evt);
+}
+
 void TroenGame::stepGameOmega()
 {
 	static bool firstLoop = true;
@@ -131,6 +142,7 @@ void TroenGame::stepGameOmega()
 		// assign the time for the next update
 		nextTime += minMillisecondsBetweenFrames;
 
+
 		// LOOP REALLY STARTS HERE:
 		m_gameLogic->step(g_gameLoopTime, g_gameTime);
 		if (!m_gameTimer->paused())
@@ -175,10 +187,10 @@ void TroenGame::stepGameOmega()
 					m_players);
 			}
 
-			// for (auto player : m_playersWithView)
-			// {
-			// 	player->viewer()->frame();
-			// }
+			for (auto player : m_playersWithView)
+			{
+				player->viewer()->frame();
+			}
 			// TODO: find a way to eleminate this workaround
 			// doesn't work if it's executed earlier
 			if (!nearPlaneAdapted)

@@ -43,8 +43,20 @@ void TroenOmegaScene::initialize()
     }
 
 
-    getEngine()->getDefaultCamera()->setPosition(omega::Vector3f(0,40,180));
-    getEngine()->getDefaultCamera()->lookAt(omega::Vector3f(0,0,0), omega::Vector3f(0,0,1));
+    // Create an omegalib scene node and attach the root osg node to it. This is used to interact with the 
+    // osg object through omegalib interactors.
+    omegaOsg::OsgSceneObject* oso = new omegaOsg::OsgSceneObject(m_troenGame->getPlayerNode());
+    // const AlignedBox3* bbox = oso->getBoundingBox();
+    myOsg->setRootNode(oso->getTransformedNode());
+
+    // Resize the entire scene
+    mySceneNode = omega::SceneNode::create("osgRoot");
+    mySceneNode->addComponent(oso);
+    // myRoot->setScale(0.05f, 0.05f, 0.05f);
+
+
+    // getEngine()->getDefaultCamera()->setPosition(omega::Vector3f(0,40,180));
+    // getEngine()->getDefaultCamera()->lookAt(omega::Vector3f(0,0,0), omega::Vector3f(0,0,1));
 
     
     // osgDB::writeNodeFile(*(m_scene).get(), "saved.osg");
@@ -58,7 +70,7 @@ void TroenOmegaScene::initialize()
 
 
     // Set the osg node as the root node
-    myOsg->setRootNode(m_troenGame->getPlayerNode());
+    // myOsg->setRootNode();
 
     // root->addChild(ls);
 }
@@ -86,6 +98,7 @@ void TroenOmegaScene::updateOmegaCamera(const osg::Camera* cam)
     
     //order is important here, setting lookat before position 
     // will result in choppy camera rotation
+    oCenterVec = getEngine()->getDefaultCamera()->convertWorldToLocalPosition(oCenterVec);
     getEngine()->getDefaultCamera()->setPosition(oPosVec);
     getEngine()->getDefaultCamera()->lookAt(oCenterVec, oUpVec);
 }
@@ -93,30 +106,15 @@ void TroenOmegaScene::updateOmegaCamera(const osg::Camera* cam)
 
 void TroenOmegaScene::registerCorrectPath()
 {
-    std::string execPath = OMEGALIB_BIN_DIR ;
-    // String execName;
-    // omega::StringUtils::splitFilename(execPath, execName, execPath);
     osgDB::Registry* reg = osgDB::Registry::instance();
-    // std::string existingPath = "";
-    // for (auto st : reg->getLibraryFilePathList())
-    // {   
-    //     existingPath += st + ":";
-    // }
-
-
-    int vmaj = OPENSCENEGRAPH_MAJOR_VERSION;
-    int vmin = OPENSCENEGRAPH_MINOR_VERSION;
-    int vp = OPENSCENEGRAPH_PATCH_VERSION;
-
-    // omega::ostr("%1%.%2%.%3%",  
-    std::string osgv = std::to_string(vmaj) + "." + std::to_string(vmin) + "."  + std::to_string(vp);
-    // std::cout << osgv << std::endl;
-
-    
     std::string libPath = GameThread::getInstance()->getStoredLibPaths();
 
-    // std::cout << "OSG Plugin Path(s): " << libPath << std::endl;
-    reg->closeAllLibraries ();
     reg->setLibraryFilePathList(libPath);
-    osgDB::Registry::instance()->removeReaderWriter(osgDB::Registry::instance()->getReaderWriterForExtension("tga"));
+    reg->removeReaderWriter(reg->getReaderWriterForExtension("tga"));
+}
+
+
+void TroenOmegaScene::handleEvent(const omega::Event& evt)
+{
+    m_troenGame->handleEvent(evt);
 }

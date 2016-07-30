@@ -124,6 +124,8 @@ namespace troen
 
 		osg::Camera* getViewCamera();
 
+		void handleEvent(const omega::Event& evt);
+
 
 
 	public slots:

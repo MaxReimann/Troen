@@ -30,7 +30,7 @@ namespace troen
 
         virtual void initialize();
         virtual void update(const omega::UpdateContext& context);
-        virtual void handleEvent(const omega::Event& evt) {}
+        virtual void handleEvent(const omega::Event& evt);
         void updateOmegaCamera(const osg::Camera* cam);
 
         TroenGame* getTroenGame() { return m_troenGame;}

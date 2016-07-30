@@ -57,6 +57,7 @@ namespace troen
 		void activateTurbo();
 		void updateUniforms();
 		void reset();
+		void handleEvent(const omega::Event& evt);
 
 		//
 		// getters & setters & attributes
@@ -143,5 +144,6 @@ namespace troen
 		std::shared_ptr<PhysicsWorld> m_world;
 		float		m_timeOfLastCollision;
 		std::pair<float, FenceController*> m_lastFenceCollision;
+		input::BikeInputState::InputDevice m_inputDevice;
 	};
 }

@@ -254,13 +254,13 @@ bool TroenGameBuilder::buildInput()
 	for (auto player : t->m_players)
 	{
 		// attach all keyboard handlers to all gameViews
-		if (player->bikeController()->hasKeyboardHandler())
-		{
-			for (auto otherPlayer : t->m_playersWithView)
-			{
-				otherPlayer->gameView()->addEventHandler(player->bikeController()->keyboardHandler());
-			}
-		}
+		// if (player->bikeController()->hasKeyboardHandler())
+		// {
+		// 	for (auto otherPlayer : t->m_playersWithView)
+		// 	{
+		// 		otherPlayer->gameView()->addEventHandler(player->bikeController()->keyboardHandler());
+		// 	}
+		// }
 	}
 	return true;
 }

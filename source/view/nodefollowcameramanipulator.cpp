@@ -4,18 +4,22 @@
 // troen
 #include "../constants.h"
 #include "../input/bikeinputstate.h"
-
+#include <osg/Notify>
 
 using namespace troen;
 
 
 
 #define OOSG_VEC3(v) osg::Vec3(v[0], v[1], v[2])
-#define OSGVEC3_OMEGA(v) Vector3f( v.x() , v.y(), v.z() )
+#define OSGVEC3_OMEGA(v) omega::Vector3f( v.x() , v.y(), v.z() )
 #define P_OSGVEC(v)  std::cout << v.x() << " " << v.y() << " " << v.z() << std::endl;
 
 
 
+
+ NodeFollowCameraManipulator::NodeFollowCameraManipulator() : osgGA::NodeTrackerManipulator(), m_omegaRequest(false) {
+ 	// setVerticalAxisFixed(true);
+ }
 
 osg::Matrixd NodeFollowCameraManipulator::getMatrix() const
 {
@@ -26,6 +30,7 @@ osg::Matrixd NodeFollowCameraManipulator::getMatrix() const
 	return osg::Matrixd::translate(0.0, 0.0, _distance)*osg::Matrixd::rotate(_rotation)*osg::Matrixd::rotate(nodeRotation)*osg::Matrix::translate(nodeCenter);
 }
 
+
 osg::Matrixd NodeFollowCameraManipulator::getInverseMatrix() const
 {
 	osg::Vec3d nodeCenter;
@@ -33,6 +38,18 @@ osg::Matrixd NodeFollowCameraManipulator::getInverseMatrix() const
 	computeNodeCenterAndRotation(nodeCenter, nodeRotation);
 	return osg::Matrixd::translate(-nodeCenter)*osg::Matrixd::rotate(nodeRotation.inverse())*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0, 0.0, -_distance);
 }
+
+
+osg::Matrixd NodeFollowCameraManipulator::omegaGetInverseMatrix()
+{
+	osg::Vec3d nodeCenter;
+	osg::Quat nodeRotation;
+	m_omegaRequest = true;
+	computeNodeCenterAndRotation(nodeCenter, nodeRotation);
+	m_omegaRequest = false;
+	return osg::Matrixd::translate(-nodeCenter)*osg::Matrixd::rotate(nodeRotation.inverse())*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0, 0.0, -_distance);
+}
+
 
 void NodeFollowCameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 {
@@ -76,6 +93,7 @@ void NodeFollowCameraManipulator::setBikeInputState(osg::ref_ptr<input::BikeInpu
 void NodeFollowCameraManipulator::computeNodeCenterAndRotation(osg::Vec3d& nodeCenter, osg::Quat& nodeRotation) const
 {
 	osg::Matrixd localToWorld, worldToLocal;
+
 	computeNodeLocalToWorld(localToWorld);
 	computeNodeWorldToLocal(worldToLocal);
 
@@ -86,7 +104,12 @@ void NodeFollowCameraManipulator::computeNodeCenterAndRotation(osg::Vec3d& nodeC
 		nodeCenter = osg::Vec3d(nodePath.back()->getBound().center())*localToWorld + CAMERA_POSITION_OFFSET;
 	}
 	else
+	{
 		nodeCenter = osg::Vec3d(0.0f, 0.0f, 0.0f)*localToWorld;
+	}
+
+	// std::cout << "node Center:" << std::endl;
+	// P_OSGVEC(nodeCenter);
 
 	// rotation
 	osg::Matrixd coordinateFrame = getCoordinateFrame(nodeCenter);
@@ -369,19 +392,40 @@ bool NodeFollowCameraManipulator::setCenterByMousePointerIntersection( const ome
 
 
 void NodeFollowCameraManipulator::updateOmegaCamera(omega::Camera *cam){
-    osg::Vec3d eye, center, up;
+	// return;
+    osg::Vec3d eye, center, up, unused;
 
+    // call same method, that osg internally uses for its camera updates
+    osg::Matrixd invMatrix = getInverseMatrix();
+	invMatrix.getLookAt(eye, center, up);
+
+    // getTransformation(eye, center, up);
     
-    getTransformation(eye, center, up);
-    // std::cout << "post" << std::endl;
+    // P_OSGVEC(center)
+    // P_OSGVEC(up)
+    // 
+
+    // std::cout << cam->getParent() << std::endl;
 
 
     omega::Vector3f oPosVec(eye.x(), eye.y(), eye.z());
     omega::Vector3f oUpVec(up.x(), up.y(), up.z());
+    // omega::Vector3f oUpVec(0,0,1);
     omega::Vector3f oCenterVec(center.x(), center.y(), center.z());
 
     //order is important here, setting lookat before position 
     // will result in choppy camera rotation
+   	osg::NodePath nodePath;
+   	 getTrackNodePath().getNodePath(nodePath);
+
+    osg::Matrixd localToWorld = osg::computeLocalToWorld(nodePath, true);
+    osg::Vec3d worldCenter = _center * localToWorld;
+
+	// GameThread::getInstance()->getTroenGame()->getBikeNode()
+    std::cout << "nodefollow center" << std::endl;
+	P_OSGVEC(worldCenter);
+
+    oCenterVec = OSGVEC3_OMEGA(worldCenter);// cam->convertWorldToLocalPosition(oCenterVec);// omega::Vector3f(20, 20, 0.584348);   //cam->convertWorldToLocalPosition(omega::Vector3f( worldCenter.x(), worldCenter.y(), worldCenter.z())); //omega::Vector3f( worldCenter.x(), worldCenter.y(), worldCenter.z()); // 
     cam->setPosition(oPosVec);
     cam->lookAt(oCenterVec, oUpVec);     
 }
@@ -552,11 +596,11 @@ void ManipulatorController::update(const omega::UpdateContext& context)
 
 
 
-void ManipulatorController::setManipulator(NodeFollowCameraManipulator* manipulator, osg::Node* node){
+void ManipulatorController::setManipulator(NodeFollowCameraManipulator* manipulator){
     myManipulator = manipulator;
 
 
-    myManipulator->setNode(node);
+    // myManipulator->setNode(node);
     
     // default, can be overwritten by setEventAdapter
     MouseAdapter* adapter = new MouseAdapter;

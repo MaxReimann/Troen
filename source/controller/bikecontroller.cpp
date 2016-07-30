@@ -115,6 +115,7 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 {
 	osg::ref_ptr<input::BikeInputState> bikeInputState = new input::BikeInputState();
 	setInputState(bikeInputState);
+	m_inputDevice = inputDevice;
 
 	switch (inputDevice)
 	{
@@ -142,17 +143,58 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 		break;
 	}
 }
+void BikeController::handleEvent(const omega::Event& evt)
+{
+
+	switch (m_inputDevice)
+	{
+	case input::BikeInputState::KEYBOARD_wasd:
+		m_keyboardHandler->handleEvent(evt);
+		break;
+	case input::BikeInputState::KEYBOARD_arrows:
+		m_keyboardHandler->handleEvent(evt);
+		break;
+#ifdef WIN32
+	case input::BikeInputState::GAMEPAD:
+		initializeGamepad(bikeInputState);
+		break;
+#endif
+	case input::BikeInputState::GAMEPADPS4:
+		// initializeGamepadPS4(bikeInputState);
+		m_pollingThread->handleEvent(evt);
+		break;
+	case input::BikeInputState::AI:
+		m_pollingThread->handleEvent(evt);
+		// initializeAI(bikeInputState);
+		break;
+	case input::BikeInputState::REMOTE_PLAYER:
+		m_pollingThread->handleEvent(evt);
+		// initializeRemote(bikeInputState);
+		break;
+	default:
+		break;
+	}
+}
 
 void BikeController::initializeWASD(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
-	m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol>{
-		osgGA::GUIEventAdapter::KEY_W,
-			osgGA::GUIEventAdapter::KEY_A,
-			osgGA::GUIEventAdapter::KEY_S,
-			osgGA::GUIEventAdapter::KEY_D,
-			osgGA::GUIEventAdapter::KEY_Space,
-			osgGA::GUIEventAdapter::KEY_G
-	});
+	// m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol>{
+	// 	osgGA::GUIEventAdapter::KEY_W,
+	// 		osgGA::GUIEventAdapter::KEY_A,
+	// 		osgGA::GUIEventAdapter::KEY_S,
+	// 		osgGA::GUIEventAdapter::KEY_D,
+	// 		osgGA::GUIEventAdapter::KEY_Space,
+	// 		osgGA::GUIEventAdapter::KEY_G
+	// });
+
+	m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<omega::KeyCode>{
+		static_cast<omega::KeyCode>('w'), 
+		static_cast<omega::KeyCode>('a'), 
+		static_cast<omega::KeyCode>('s'), 
+		static_cast<omega::KeyCode>('d') , 
+		static_cast<omega::KeyCode>(' '), 
+		static_cast<omega::KeyCode>('g') });
+
 
 	m_pollingThread = m_keyboardHandler.get();
 	m_pollingThread->start();
@@ -160,14 +202,17 @@ void BikeController::initializeWASD(osg::ref_ptr<input::BikeInputState> bikeInpu
 
 void BikeController::initializeArrows(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
-	m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol>{
-		osgGA::GUIEventAdapter::KEY_Up,
-			osgGA::GUIEventAdapter::KEY_Left,
-			osgGA::GUIEventAdapter::KEY_Down,
-			osgGA::GUIEventAdapter::KEY_Right,
-			osgGA::GUIEventAdapter::KEY_Control_R,
-			osgGA::GUIEventAdapter::KEY_M,
-	});
+	// m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<osgGA::GUIEventAdapter::KeySymbol>{
+	// 	osgGA::GUIEventAdapter::KEY_Up,
+	// 		osgGA::GUIEventAdapter::KEY_Left,
+	// 		osgGA::GUIEventAdapter::KEY_Down,
+	// 		osgGA::GUIEventAdapter::KEY_Right,
+	// 		osgGA::GUIEventAdapter::KEY_Control_R,
+	// 		osgGA::GUIEventAdapter::KEY_M,
+	// });
+	m_keyboardHandler = new input::Keyboard(bikeInputState, std::vector<omega::KeyCode>{
+		omega::KC_UP, omega::KC_LEFT, omega::KC_DOWN, omega::KC_RIGHT , omega::KC_CONTROL_R, static_cast<omega::KeyCode>('m') });
+
 
 	m_pollingThread = m_keyboardHandler.get();
 	m_pollingThread->start();
@@ -242,13 +287,15 @@ void BikeController::attachTrackingCamera(NodeFollowCameraManipulator* manipulat
 	osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*> (viewNode->getChild(0));
 
 
+
 	m_cameraController = 
 		std::make_shared<ManipulatorController>( omega::Engine::instance()->getDefaultCamera() );
 
 
-	// set the actual node as the track node, not the pat
-	m_cameraController->setManipulator(manipulator, pat->getChild(0));
-	// manipulator->setTrackNode(pat->getChild(0));
+		// set the actual node as the track node, not the pat
+	m_cameraController->setManipulator(manipulator);
+	manipulator->setTrackNode(pat->getChild(0));
+	// manipulator->setNode(m_player->getTroenGame()->getSceneNode().get());
 
 
 
@@ -262,6 +309,8 @@ void BikeController::attachTrackingCamera(NodeFollowCameraManipulator* manipulat
 		osg::Z_AXIS, // up
 		false
 		);
+
+	manipulator->home(0.0);
 }
 
 void BikeController::attachGameView(osg::ref_ptr<osgViewer::View> gameView)
@@ -463,6 +512,7 @@ long double BikeController::getTimeFactor()
 
 void BikeController::moveBikeToPosition(btTransform transform)
 {
+
 	m_bikeModel->moveBikeToPosition(transform);
 	m_player->fenceController()->setLastPosition(transform.getRotation(), transform.getOrigin());
 }

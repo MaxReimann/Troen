@@ -231,6 +231,13 @@ float BikeModel::updateState(long double time)
 	velocityXY.setZ(zComponent);
 	m_bikeRigidBody->setLinearVelocity(velocityXY);
 
+
+	// std::cout << velocityXY.x() << " " << velocityXY.y() << " " << velocityXY.z() << std::endl;
+
+	auto orig = getTransform().getOrigin();
+	std::cout << orig.x() << " " << orig.y() << " " << orig.z() << std::endl;
+
+
 	return speed;
 }
 

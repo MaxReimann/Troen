@@ -99,28 +99,28 @@ m_hasGameView(config->ownView[id])
 		m_gameView->setSceneData(m_playerNode);
 
 
-		createCameraManipulator();
-
+		m_manipulator = new NodeFollowCameraManipulator();
+		m_bikeController->attachTrackingCamera(m_manipulator.get());
 
 		m_bikeController->attachGameView(m_gameView);
 
 
 
-		// m_gameView->setCameraManipulator(manipulator.get());
+		m_gameView->setCameraManipulator(m_manipulator.get());
 		// m_gameView->addEventHandler(game->gameEventHandler());
 		// m_gameView->addEventHandler(game->statsHandler());
 
-// #ifdef WIN32
-// 		if (config->fullscreen)
-// 			m_gameView->apply(new osgViewer::SingleScreen(0));
-// 		else
-// 			m_gameView->apply(new osgViewer::SingleWindow(400, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
-// #else
-// 		if (config->fullscreen)
-// 			m_gameView->setUpViewOnSingleScreen(0);
-// 		else
-// 			m_gameView->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-// #endif
+#ifdef WIN32
+		if (config->fullscreen)
+			m_gameView->apply(new osgViewer::SingleScreen(0));
+		else
+			m_gameView->apply(new osgViewer::SingleWindow(400, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
+#else
+		if (config->fullscreen)
+			m_gameView->setUpViewOnSingleScreen(0);
+		else
+			m_gameView->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+#endif
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -131,8 +131,8 @@ m_hasGameView(config->ownView[id])
 
 // 	if (config->ownView[m_id])
 // 	{
-// 		m_viewer = new SampleOSGViewer();
-// 		m_viewer->addView(m_gameView);
+		m_viewer = new SampleOSGViewer();
+		m_viewer->addView(m_gameView);
 
 // #ifdef WIN32
 // 		// turn of vSync (since we implement
@@ -207,14 +207,11 @@ void Player::update(int g_gameTime)
 }
 
 
-void Player::createCameraManipulator()
+void Player::handleEvent(const omega::Event& evt)
 {
-		m_manipulator = new NodeFollowCameraManipulator();
-		
-
-		m_bikeController->attachTrackingCamera(m_manipulator.get());
-
+	bikeController()->handleEvent(evt);
 }
+
 
 Player::~Player()
 {

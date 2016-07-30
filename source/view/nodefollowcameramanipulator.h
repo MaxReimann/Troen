@@ -60,10 +60,11 @@ namespace troen
 	class NodeFollowCameraManipulator : public osgGA::NodeTrackerManipulator
 	{
 	public:
-		NodeFollowCameraManipulator() : osgGA::NodeTrackerManipulator() {}
+		NodeFollowCameraManipulator();
 
 		virtual osg::Matrixd getMatrix() const;
 		virtual osg::Matrixd getInverseMatrix() const;
+		virtual osg::Matrixd omegaGetInverseMatrix();
 		virtual void setByMatrix(const osg::Matrixd& matrix);
 		virtual void setByInverseMatrix(const osg::Matrixd& matrix);
 
@@ -71,18 +72,18 @@ namespace troen
 
 		virtual void setBikeInputState(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		
-		bool handleEvent(const omega::Event &event);
-		bool handleMousePush(const omega::Event &event);
-		bool handleKeyDown(const omega::Event &event);
-		bool handleKeyUp(const omega::Event &event);
-		void addMouseEvent(const omega::Event &event);
-		bool handleMouseRelease(const omega::Event &event);
-		bool handleMouseWheel(const omega::Event &event);
-		bool handleMouseDrag(const omega::Event &event);
-		bool handleMouseMove(const omega::Event &event) {return false;}
-		void setNewOptions();
-		bool handleMouseDeltaMovement( const omega::Event &event );
-		bool setCenterByMousePointerIntersection( const omega::Event &event);
+		virtual bool handleEvent(const omega::Event &event);
+		virtual bool handleMousePush(const omega::Event &event);
+		virtual bool handleKeyDown(const omega::Event &event);
+		virtual bool handleKeyUp(const omega::Event &event);
+		virtual void addMouseEvent(const omega::Event &event);
+		virtual bool handleMouseRelease(const omega::Event &event);
+		virtual bool handleMouseWheel(const omega::Event &event);
+		virtual bool handleMouseDrag(const omega::Event &event);
+		virtual bool handleMouseMove(const omega::Event &event) {return false;}
+		virtual void setNewOptions();
+		virtual bool handleMouseDeltaMovement( const omega::Event &event );
+		virtual bool setCenterByMousePointerIntersection( const omega::Event &event);
 
 		void setEventAdapter(EventAdapter *eventAdapter);
 
@@ -99,6 +100,7 @@ namespace troen
 		mutable osg::Quat m_oldPlayerViewingRotation;
 
 		EventAdapter* _eventAdapter;
+		bool m_omegaRequest;
 
 		
 	};
@@ -118,7 +120,7 @@ namespace troen
 
 		// void onEvent(const omega::Event* event);
 		//sets the manipulator to the node, if node is NULL, the manipualtor is set to the root scene node
-		void setManipulator(NodeFollowCameraManipulator* manipulator, osg::Node* node = NULL);
+		void setManipulator(NodeFollowCameraManipulator* manipulator);
 		void setEventAdapter(EventAdapter *eventAdapter);
 		// void setManipulator(NodeTrackerManipulator* manipulator);
 
