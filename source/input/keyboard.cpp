@@ -24,7 +24,6 @@ void Keyboard::handleEvent(const omega::Event& event)
 		{
 			if (event.isKeyDown(m_keys[0]))
 			{
-				std::cout << "up pressed" << std::endl;
 				m_upPressed = true;
 				return;
 			}

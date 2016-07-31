@@ -14,6 +14,7 @@
 
 
 // #include "troengame.h"
+class RenderPassListener;
 
 namespace troen
 {
@@ -46,8 +47,7 @@ namespace troen
 
         TroenGame* m_troenGame; 
 
-
-
+        std::shared_ptr<RenderPassListener> myRenderPassListener;
     };
 
 }

@@ -2,7 +2,7 @@
 #include <iostream>
 // Qt
 #include <QApplication>
-
+#include <QCommandLineParser>
 //troen
 #include "mainwindow.h"
 #include "troengame.h"
@@ -34,19 +34,70 @@ int main(int argc, char* argv[])
 
 	// register meta types
 	qRegisterMetaType<troen::GameConfig>("GameConfig");
+	qRegisterMetaType<troen::CArguments>("CArguments");
 
 	// setup application settings
 	QApplication::setApplicationName("Troen");
-	QApplication * application = new QApplication(argc, argv);
+	QApplication application(argc, argv);
 
-	troen::MainWindow * mainWindow = new troen::MainWindow();
-	mainWindow->show();
 
-	result = application->exec();
+	// QCommandLineParser parser;
+ //    parser.setApplicationDescription("Troen: An action packed 3D-remake of the classic Armagetron featuring polished graphics, customizable maps, powerups, scriptable AI, multiplayer and many more!");
+ //    parser.addHelpOption();
+ //    parser.addVersionOption();
+
+ //    parser.addOptions({
+ //        // A boolean option with multiple names (-f, --force)
+ //        {"troen-remote-start",
+ //            QCoreApplication::translate("main", "Remote rendering client startup. Does not open qt window")},
+ //    });
+
+
+
+    // // Process the actual command line arguments given by the user
+    // parser.process(application);
+
+    // bool remoteStart = parser.isSet("troen-remote-start");
+
+	std::vector<char*> unprocessedOptions;
+	int numPassedOptions = argc;
+
+	bool remoteStart = false;
+
+    for (int i=0; i < argc; i++)
+    {
+    	if (strcmp(argv[i], "--troen-remote-start") == 0 )
+    	{
+    		remoteStart = true;
+    		numPassedOptions--;
+    	} else {
+    		unprocessedOptions.push_back(argv[i]);
+    	}
+    }
+
+
+    CArguments args;
+    args.argc = numPassedOptions;
+    args.argv = unprocessedOptions.data();
+
+	troen::MainWindow mainWindow(args);
+    
+    if (!remoteStart){
+		mainWindow.show();
+		result = application.exec();
+    } else   {
+    	// create GameThread and Game
+		std::shared_ptr<GameThread> troenGameThread = std::make_shared<GameThread>(new QThread());
+		GameConfig gameConfig(mainWindow.loadSettingsToConfig());
+
+		// m_troenGame = new TroenGame(m_gameThread);
+		troenGameThread->prepareAndStartGame(gameConfig, args);
+    }
+
 
 	// Clean Up
-	delete mainWindow;
-	delete application;
+	// delete mainWindow;
+	// delete application;
 
 	return result;
 }

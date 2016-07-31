@@ -25,44 +25,7 @@ GameThread::GameThread(QThread* thread) : m_gameThread(thread), m_storedLibPaths
 }
 
 
-// TroenGame* getTroenGame()
-// {
-//     if (m_troenGame != NULL)
-//         return m_troenGame;
-
-//     for (omega::EngineModule* module : omega::ModuleServices::getModules())
-//     {
-//         // omega::omsg("test m");
-//         // omega::omsg(module->getName());
-//         if (module->getName().compare("TroenOmegaScene")==0)
-//         {
-//             m_gameModule = dynamic_cast<TroenOmegaScene*>(module);
-//             assert (m_gameModule != NULL);
-            
-
-//             std::cout << m_troenGame->getRootNode().get() << std::endl;
-//             std::cout << m_troenGame->getSceneNode().get() << std::endl;
-
-            
-//             m_gameModule->setRootNode(m_troenGame->getRootNode());
-//             m_gameModule->setSceneNode(m_troenGame->getSceneNode());
-//             break;
-//         }
-//     }
-//     if (m_gameModule)
-//     {
-//         m_troenGame = m_gameModule->getTroenGame();
-//         return m_troenGame;
-//     }
-//     else {
-//         omega::oerror("TroenOmegaScene Module not found");
-//         return NULL;
-//     }
-// }
-
-
-
-void GameThread::prepareAndStartGame(const GameConfig& config){
+void GameThread::prepareAndStartGame(const GameConfig& config,const CArguments& arguments){
     m_omegaApp = std::make_shared<omega::Application<TroenOmegaScene>  >("Troen");
 
     for (auto libPath : osgDB::Registry::instance()->getLibraryFilePathList ()) 
@@ -76,9 +39,15 @@ void GameThread::prepareAndStartGame(const GameConfig& config){
 
     m_gameConfig = new GameConfig(config);
 
+    for (int i=0; i < arguments.argc; i++)
+    {
+        std::cout << arguments.argv[i] << " ";
+    }
+    std::cout << std::endl;
 
-    char* a[] = {"Troen","--log","v"};
-    omain(*(m_omegaApp.get()), 3, a);
+
+    // char* a[] = {"Troen","--log","v"};
+    omain(*(m_omegaApp.get()), arguments.argc, arguments.argv);
 }
 
 

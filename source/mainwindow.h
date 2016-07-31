@@ -25,12 +25,13 @@ namespace troen
 		Q_OBJECT
 
 	public:
-		MainWindow (QWidget * parent = NULL);
+		MainWindow (CArguments& arguments, QWidget * parent = NULL);
 		virtual ~MainWindow();
 		GameConfig getGameConfig();
+		GameConfig loadSettingsToConfig();
 
 	signals:
-		void startGame(const GameConfig config);
+		void startGame(const GameConfig config, const CArguments arguments);
 
 
 	public slots:
@@ -83,5 +84,6 @@ namespace troen
 		bool		m_networkingReady;
 		QLineEdit* m_connectAdressEdit;
 		int m_networkPlayers;
+		CArguments* m_arguments;
 	};
 }

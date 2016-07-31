@@ -76,6 +76,7 @@ namespace troen
 	class GameEventHandler;
 	class GameLogic;
 	class GameConfig;
+	class CArguments;
 	class Player;
 
 	class BikeModel;

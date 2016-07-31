@@ -34,7 +34,7 @@ namespace troen
 
 
     public slots:
-        void prepareAndStartGame(const GameConfig& config);
+        void prepareAndStartGame(const GameConfig& config,const CArguments& arguments);
 
     protected:
         // Startup Options

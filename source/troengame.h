@@ -51,8 +51,18 @@ namespace troen
 		std::string levelName;
         // TODO: add Destructor to avoid memory leak
 	};
+
+
+	class CArguments
+	{
+	public:
+		int argc;
+		char** argv;
+	};
 }
+
 Q_DECLARE_METATYPE(troen::GameConfig)
+Q_DECLARE_METATYPE(troen::CArguments)
 
 namespace troen
 {

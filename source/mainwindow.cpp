@@ -21,7 +21,7 @@ using namespace troen;
 
 #define MAX_BIKES 6
 
-MainWindow::MainWindow(QWidget * parent)
+MainWindow::MainWindow(CArguments& arguments, QWidget * parent)
 {
 	QMainWindow();
     // configure window
@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget * parent)
 	tabsContainerWidget->addTab(vMainTab, "Main");
 	tabsContainerWidget->addTab(vNetworkTab, "Network");
 	setCentralWidget(tabsContainerWidget);
+
+	m_arguments = &arguments;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -257,7 +259,8 @@ MainWindow::MainWindow(QWidget * parent)
 	connect(m_bikeNumberSpinBox, SIGNAL(valueChanged(int)), this, SLOT(bikeNumberChanged(int)));
 	connect(m_serverCheckBox, SIGNAL(clicked()), this, SLOT(connectionTypeChanged()));
 
-	connect(this, SIGNAL(startGame(GameConfig)), m_troenGameThread.get(), SLOT(prepareAndStartGame(const GameConfig&)));
+	connect(this, SIGNAL(startGame(GameConfig, CArguments)), m_troenGameThread.get(), 
+		SLOT(prepareAndStartGame(const GameConfig&,const CArguments&)));
 	
 }
 
@@ -300,7 +303,7 @@ void MainWindow::prepareGameStart()
 
 	GameConfig config = getGameConfig();
 	//TODO: remove ownView checkboxes & replace with spinbox for number of views
-	int i = 0;
+	int i = 0;emit
 	for(QCheckBox* ownViewCheckbox : m_ownViewCheckboxes) {
 		config.ownView[i] = ownViewCheckbox->isChecked();
 		i++;
@@ -310,7 +313,7 @@ void MainWindow::prepareGameStart()
 		m_troenGame->synchronizeGameStart(config);
 
 	saveSettings();
-	emit startGame(config);
+	emit startGame(config, *m_arguments);
 }
 
 
@@ -502,6 +505,33 @@ void MainWindow::loadSettings()
 	updatePlayerInputBoxes();
 	bikeNumberChanged(m_bikeNumberSpinBox->value());
 }
+
+
+GameConfig MainWindow::loadSettingsToConfig()
+{
+	QSettings settings(m_settingsFileName, QSettings::IniFormat);
+
+	GameConfig config;
+	config.numberOfPlayers = settings.value("bikeNumber").toInt();
+	config.timeLimit = settings.value("timeLimit").toInt();
+	config.playerInputTypes = new int[config.numberOfPlayers];
+	config.playerColors = new QColor[config.numberOfPlayers];
+	config.playerNames = new QString[config.numberOfPlayers];
+	for (int i = 0; i < config.numberOfPlayers; i++)
+	{
+		config.playerInputTypes[i] = settings.value("player" + QString::number(i) + "input").toInt();
+		config.playerNames[i] = settings.value("player" + QString::number(i) + "name").toString();
+		config.playerColors[i] = settings.value("player" + QString::number(i) + "color").value<QColor>();
+	}
+	config.levelName = m_levelComboBox->itemText(settings.value("level").toInt()).toStdString();
+	config.fullscreen = false; //TODO: set approtae value
+	config.usePostProcessing = settings.value("postProcessing").toBool();
+	config.useDebugView = settings.value("debugView").toBool();
+	config.testPerformance = settings.value("vSyncOff").toBool();
+	config.useReflection = settings.value("reflection").toBool();
+	return config;
+}
+
 
 void MainWindow::saveSettings()
 {

@@ -17,7 +17,8 @@ using namespace troen;
 
 
 
- NodeFollowCameraManipulator::NodeFollowCameraManipulator() : osgGA::NodeTrackerManipulator(), m_omegaRequest(false) {
+
+ NodeFollowCameraManipulator::NodeFollowCameraManipulator() : osgGA::NodeTrackerManipulator() {
  	// setVerticalAxisFixed(true);
  }
 
@@ -40,21 +41,12 @@ osg::Matrixd NodeFollowCameraManipulator::getInverseMatrix() const
 }
 
 
-osg::Matrixd NodeFollowCameraManipulator::omegaGetInverseMatrix()
-{
-	osg::Vec3d nodeCenter;
-	osg::Quat nodeRotation;
-	m_omegaRequest = true;
-	computeNodeCenterAndRotation(nodeCenter, nodeRotation);
-	m_omegaRequest = false;
-	return osg::Matrixd::translate(-nodeCenter)*osg::Matrixd::rotate(nodeRotation.inverse())*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0, 0.0, -_distance);
-}
-
-
 void NodeFollowCameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 {
 	setByInverseMatrix(osg::Matrixd::inverse(matrix));
 }
+
+
 
 void NodeFollowCameraManipulator::setByInverseMatrix(const osg::Matrixd& matrix)
 {
@@ -392,43 +384,35 @@ bool NodeFollowCameraManipulator::setCenterByMousePointerIntersection( const ome
 
 
 void NodeFollowCameraManipulator::updateOmegaCamera(omega::Camera *cam){
-	// return;
-    osg::Vec3d eye, center, up, unused;
+    osg::Vec3d eye, unused_center, up;
 
     // call same method, that osg internally uses for its camera updates
     osg::Matrixd invMatrix = getInverseMatrix();
-	invMatrix.getLookAt(eye, center, up);
+	invMatrix.getLookAt(eye, unused_center, up);
 
-    // getTransformation(eye, center, up);
-    
-    // P_OSGVEC(center)
-    // P_OSGVEC(up)
-    // 
-
-    // std::cout << cam->getParent() << std::endl;
-
-
-    omega::Vector3f oPosVec(eye.x(), eye.y(), eye.z());
-    omega::Vector3f oUpVec(up.x(), up.y(), up.z());
-    // omega::Vector3f oUpVec(0,0,1);
-    omega::Vector3f oCenterVec(center.x(), center.y(), center.z());
-
-    //order is important here, setting lookat before position 
-    // will result in choppy camera rotation
    	osg::NodePath nodePath;
-   	 getTrackNodePath().getNodePath(nodePath);
-
+   	//get the path from the tracked node to the top level element
+   	getTrackNodePath().getNodePath(nodePath);
+   	//compute a transform from the tracked node space to world space
     osg::Matrixd localToWorld = osg::computeLocalToWorld(nodePath, true);
+    // apply this transformation to the cameramanipulator center
+    // this is normally the tracked node center, but might be panned
     osg::Vec3d worldCenter = _center * localToWorld;
 
-	// GameThread::getInstance()->getTroenGame()->getBikeNode()
-    std::cout << "nodefollow center" << std::endl;
-	P_OSGVEC(worldCenter);
-
-    oCenterVec = OSGVEC3_OMEGA(worldCenter);// cam->convertWorldToLocalPosition(oCenterVec);// omega::Vector3f(20, 20, 0.584348);   //cam->convertWorldToLocalPosition(omega::Vector3f( worldCenter.x(), worldCenter.y(), worldCenter.z())); //omega::Vector3f( worldCenter.x(), worldCenter.y(), worldCenter.z()); // 
-    cam->setPosition(oPosVec);
-    cam->lookAt(oCenterVec, oUpVec);     
+    omega::Vector3f oCenterVec = OSGVEC3_OMEGA(worldCenter);
+    // set the lookat of omega camera
+    //order is important here, setting lookat before position 
+    // will result in choppy camera rotation
+    cam->setPosition( OSGVEC3_OMEGA(eye) );
+    cam->lookAt(oCenterVec, OSGVEC3_OMEGA(up) );     
 }
+
+
+
+
+
+
+
 
 // ============================================================================
 

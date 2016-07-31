@@ -234,8 +234,8 @@ float BikeModel::updateState(long double time)
 
 	// std::cout << velocityXY.x() << " " << velocityXY.y() << " " << velocityXY.z() << std::endl;
 
-	auto orig = getTransform().getOrigin();
-	std::cout << orig.x() << " " << orig.y() << " " << orig.z() << std::endl;
+	// auto orig = getTransform().getOrigin();
+	// std::cout << orig.x() << " " << orig.y() << " " << orig.z() << std::endl;
 
 
 	return speed;

@@ -187,10 +187,10 @@ void TroenGame::stepGameOmega()
 					m_players);
 			}
 
-			for (auto player : m_playersWithView)
-			{
-				player->viewer()->frame();
-			}
+			// for (auto player : m_playersWithView)
+			// {
+			// 	player->viewer()->frame();
+			// }
 			// TODO: find a way to eleminate this workaround
 			// doesn't work if it's executed earlier
 			if (!nearPlaneAdapted)

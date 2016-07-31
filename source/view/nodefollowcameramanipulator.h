@@ -64,7 +64,6 @@ namespace troen
 
 		virtual osg::Matrixd getMatrix() const;
 		virtual osg::Matrixd getInverseMatrix() const;
-		virtual osg::Matrixd omegaGetInverseMatrix();
 		virtual void setByMatrix(const osg::Matrixd& matrix);
 		virtual void setByInverseMatrix(const osg::Matrixd& matrix);
 
@@ -85,6 +84,7 @@ namespace troen
 		virtual bool handleMouseDeltaMovement( const omega::Event &event );
 		virtual bool setCenterByMousePointerIntersection( const omega::Event &event);
 
+
 		void setEventAdapter(EventAdapter *eventAdapter);
 
 		void updateOmegaCamera(omega::Camera *cam);
@@ -100,7 +100,6 @@ namespace troen
 		mutable osg::Quat m_oldPlayerViewingRotation;
 
 		EventAdapter* _eventAdapter;
-		bool m_omegaRequest;
 
 		
 	};

@@ -29,6 +29,7 @@ m_gameLogic(gameLogic)
 
 	if (m_useDebugView)
 	{
+		std::cout << "using debug draw " << std::endl;
 		m_debug = new util::GLDebugDrawer();
 		m_debug->setDebugMode(btIDebugDraw::DBG_MAX_DEBUG_DRAW_MODE);
 		m_world->setDebugDrawer(m_debug);
