@@ -412,6 +412,11 @@ void TroenGame::registerSharedListener(SharedDataListener* listener)
 	m_sharedDataListeners.push_back(listener);
 }
 
+void TroenGame::registerRenderPassListener(RenderPassListener* listener)
+{
+	m_renderPassListeners.push_back(listener);
+}
+
 void TroenGame::commitSharedData(omega::SharedOStream& out)
 {
 	std::cout << "[troengame] commit shared data" << std::endl;

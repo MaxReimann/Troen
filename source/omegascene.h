@@ -24,6 +24,19 @@ namespace troen
         virtual void updateSharedData(omega::SharedIStream& in) = 0;
     };
 
+    class RenderPassListener {
+    public:
+        virtual void onRender(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene) {}
+    };
+
+    class MyRenderPassListener : public omegaOsg::IOsgRenderPassListener
+    {
+    public:
+        MyRenderPassListener(TroenGame* game) : m_game(game) {}
+        virtual void onFrameFinished(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene);
+    protected:
+        TroenGame* m_game;
+    };
 
     class TroenOmegaScene: public omega::EngineModule
     {
@@ -46,11 +59,11 @@ namespace troen
         omegaOsg::OsgModule* myOsg;
         omega::SceneNode* mySceneNode;
         omega::Actor* myInteractor;
+        std::shared_ptr<MyRenderPassListener> myRenderPassListener;
         // TroenGame *m_troenGame;
 
         TroenGame* m_troenGame; 
 
-        std::shared_ptr<RenderPassListener> myRenderPassListener;
     };
 
 }

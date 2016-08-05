@@ -111,11 +111,14 @@ namespace troen
 		std::shared_ptr<networking::ServerManager> getServerManager() { return m_ServerManager; }
 		std::shared_ptr<networking::NetworkManager> getNetworkManager();
 
+		std::vector<RenderPassListener*>& getRenderPassListeners() { return m_renderPassListeners;}
+
 
 		void commitSharedData(omega::SharedOStream& out);
         void updateSharedData(omega::SharedIStream& in);
 
         void registerSharedListener(SharedDataListener* listener);
+        void registerRenderPassListener(RenderPassListener* listener);
 
 
 
@@ -198,6 +201,8 @@ namespace troen
 		// std::shared_ptr<omega::Application<TroenOmegaScene> >	m_omegaApp;
 
 		std::vector<SharedDataListener*> 					m_sharedDataListeners;
+		std::vector<RenderPassListener*> 		m_renderPassListeners;
+
 
 		ResourcePool m_resourcePool;
 

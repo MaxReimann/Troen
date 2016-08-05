@@ -189,6 +189,9 @@ void Player::setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNo
 													game->skyDome()->getSkyboxTexture(), m_id);
 	m_playerNode->getOrCreateStateSet()->addUniform(new osg::Uniform("reflectionTex", 5 + m_id));
 
+	m_troenGame->registerRenderPassListener(m_reflection.get());
+
+
 	reflection()->addSceneNode(sceneNode);
 	playerNode()->addChild(reflection()->getReflectionCameraGroup());
 }

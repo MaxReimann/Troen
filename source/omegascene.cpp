@@ -12,19 +12,23 @@ using namespace troen;
 
 
 
-class RenderPassListener : public omegaOsg::IOsgRenderPassListener
-{
-public:
-    virtual void onFrameFinished(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene){
 
-        //fix culling
-        double fovy, aspect, znear, zfar;
-        scene->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
-        scene->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-        znear = 1.0;
-        scene->getCamera()->setProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
+void MyRenderPassListener::onFrameFinished(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene){
+
+    //fix culling
+    double fovy, aspect, znear, zfar;
+    scene->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
+    scene->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+    znear = 1.0;
+    scene->getCamera()->setProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
+
+    for (auto listener : m_game->getRenderPassListeners())
+    {
+        listener->onRender(client, context, scene);
     }
-};
+
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,12 +49,12 @@ void TroenOmegaScene::initialize()
 
     registerCorrectPath();
 
-    myRenderPassListener = std::make_shared<RenderPassListener>();
 
     m_troenGame = GameThread::getInstance()->getTroenGame();
 
     m_troenGame->prepareGame(*GameThread::getInstance()->getGameConfig());
 
+    myRenderPassListener = std::make_shared<MyRenderPassListener>(m_troenGame);
 
     // Load osg object
     if(omega::SystemManager::settingExists("config/scene"))
@@ -91,13 +95,6 @@ void TroenOmegaScene::initialize()
 void TroenOmegaScene::update(const omega::UpdateContext& context) 
 {
     m_troenGame->stepGameOmega();
-
-    // updateOmegaCamera(m_troenGame->getViewCamera());
-}
-
-
-void TroenOmegaScene::updateOmegaCamera(const osg::Camera* cam)
-{
 }
 
 
