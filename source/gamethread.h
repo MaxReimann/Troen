@@ -33,6 +33,7 @@ namespace troen
         static GameThread* getInstance() {return GameThread::instance;}
 
 
+
     public slots:
         void prepareAndStartGame(const GameConfig& config,const CArguments& arguments);
 

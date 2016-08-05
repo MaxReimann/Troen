@@ -39,13 +39,6 @@ void GameThread::prepareAndStartGame(const GameConfig& config,const CArguments& 
 
     m_gameConfig = new GameConfig(config);
 
-    for (int i=0; i < arguments.argc; i++)
-    {
-        std::cout << arguments.argv[i] << " ";
-    }
-    std::cout << std::endl;
-
-
     // char* a[] = {"Troen","--log","v"};
     omain(*(m_omegaApp.get()), arguments.argc, arguments.argv);
 }

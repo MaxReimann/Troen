@@ -12,16 +12,19 @@
 #include "../model/fencemodel.h"
 #include "../controller/fencecontroller.h"
 
+#define P_OSGVEC(v)  std::cout << v.x() << " " << v.y() << " " << v.z() << std::endl;
+
 using namespace troen;
 
 FenceView::FenceView(FenceController* fenceController, osg::Vec3 color, std::shared_ptr<AbstractModel>& model) :
 AbstractView(),
 m_model(std::static_pointer_cast<FenceModel>(model)),
 m_playerColor(color),
-m_fenceController(fenceController)
+m_fenceController(fenceController), m_masterNode(false)
 {
 	initializeFence();
 	initializeShader();
+	m_start = false;
 }
 
 void FenceView::initializeFence()
@@ -58,7 +61,7 @@ void FenceView::initializeFence()
 	m_geode->addDrawable(m_geometry);
 
 	m_node->addChild(m_geode);
-	m_node->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+	m_node->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF); 
 	m_node->setName("fenceGroup");
 
 	m_radarElementsGroup = new osg::Group();
@@ -67,6 +70,7 @@ void FenceView::initializeFence()
 
 	m_bendingActiveUniform = new osg::Uniform("bendingActivated", false);
 	m_node->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
+
 }
 
 void FenceView::updateFadeOutFactor(float fadeOutFactor)
@@ -105,8 +109,7 @@ void FenceView::initializeShader()
 }
 
 void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
-{
-
+{	
 	if (m_coordinates->size() == 0)
 	{
 		m_coordinates->push_back(lastPosition);
@@ -114,6 +117,7 @@ void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 		m_relativeHeights->push_back(0.f);
 		m_relativeHeights->push_back(1.f);
 	}
+
 
 	// game fence part
 	m_coordinates->push_back(currentPosition);
@@ -125,7 +129,7 @@ void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 	int currentFenceParts = (m_coordinates->size() - 2) / 2;
 
 	// radar fence part
-	if (currentFenceParts % FENCE_TO_MINIMAP_PARTS_RATIO == 0)
+	if (false && currentFenceParts % FENCE_TO_MINIMAP_PARTS_RATIO == 0) // TODO: undo false./translate back in
 	{
 		osg::ref_ptr<osg::Box> box
 			= new osg::Box(osg::Vec3(0, 0, 0), 60, 60, 60);
@@ -152,7 +156,21 @@ void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 
 	//necessary for network fences, because of unpredictable timings
 	m_geometry->dirtyBound();
+	// very important to dirty vertex and attributes, as otherwise this can segfault
+	// (only expierenced in conjuction with omegalib)
+    m_coordinates->dirty();
+    m_relativeHeights->dirty();
+
 	m_drawArrays->setCount(m_coordinates->size());
+
+	if (m_masterNode)
+	{
+		m_currentPositionCached = currentPosition;
+		m_lastPositionCached = lastPosition;
+	}
+
+
+
 }
 
 void FenceView::removeAllFences()
@@ -209,4 +227,31 @@ void FenceView::hideFencesInRadarForPlayer(const int id)
 void FenceView::setBendingActive(bool val)
 {
 	m_bendingActiveUniform->set(val);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// only run on master
+// for each part of each geo of each object of each asset:
+// send all the verts, faces, normals, colours, etc
+void FenceView::commitSharedData(omega::SharedOStream& out)
+{
+	std::cout << "comitting shared data" << std::endl;
+	m_masterNode = true;
+	out << m_fenceUpdated << m_lastPositionCached << m_currentPositionCached;
+	// out << 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// only run on slaves!
+void FenceView::updateSharedData(omega::SharedIStream& in)
+{
+	std::cout << "updating shared data" << std::endl;
+	m_masterNode = false;
+	in >> m_fenceUpdated >> m_lastPositionCached >> m_currentPositionCached;
+	if (m_fenceUpdated)
+		addFencePart(m_lastPositionCached, m_currentPositionCached);
+
+	updateFenceGap(m_lastPositionCached, m_currentPositionCached);
+
 }

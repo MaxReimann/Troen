@@ -404,6 +404,36 @@ std::shared_ptr<networking::NetworkManager> TroenGame::getNetworkManager()
 		return NULL;
 }
 
+
+// equalizer screen sync
+
+void TroenGame::registerSharedListener(SharedDataListener* listener)
+{
+	m_sharedDataListeners.push_back(listener);
+}
+
+void TroenGame::commitSharedData(omega::SharedOStream& out)
+{
+	std::cout << "[troengame] commit shared data" << std::endl;
+    for (auto listener : m_sharedDataListeners)
+    {
+    	listener->commitSharedData(out);
+    }
+}
+
+
+void TroenGame::updateSharedData(omega::SharedIStream& in)
+{
+    for (auto listener : m_sharedDataListeners)
+    {
+    	listener->updateSharedData(in);
+    }
+}
+
+
+
+
+/////// utility //////////////
 void TroenGame::reloadLevel()
 {
 	m_levelController->reload();

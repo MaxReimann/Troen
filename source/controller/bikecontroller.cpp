@@ -57,6 +57,7 @@ BikeController::BikeController(
 	m_lastFenceCollision(std::make_pair<float, FenceController*>(0, NULL))
 {
 	m_view = m_bikeView = std::make_shared<BikeView>(player->color(), resourcePool);
+	m_player->getTroenGame()->registerSharedListener(static_cast<SharedDataListener*>(m_bikeView.get()));
 
 	osg::ref_ptr<osg::Group> viewNode = m_bikeView->getNode();
 	m_model = m_bikeModel = std::make_shared<BikeModel>(m_initialTransform, viewNode, m_player, this);

@@ -18,16 +18,17 @@ class RenderPassListener;
 
 namespace troen
 {
+    class SharedDataListener {
+    public:
+        virtual void commitSharedData(omega::SharedOStream& out) = 0;
+        virtual void updateSharedData(omega::SharedIStream& in) = 0;
+    };
 
 
     class TroenOmegaScene: public omega::EngineModule
     {
     public:
-        TroenOmegaScene(): omega::EngineModule("TroenOmegaScene")
-        {
-            myOsg = new omegaOsg::OsgModule();
-            omega::ModuleServices::addModule(myOsg); 
-        }
+        TroenOmegaScene();
 
         virtual void initialize();
         virtual void update(const omega::UpdateContext& context);
@@ -37,6 +38,8 @@ namespace troen
         TroenGame* getTroenGame() { return m_troenGame;}
         void registerCorrectPath();
 
+        void commitSharedData(omega::SharedOStream& out);
+        void updateSharedData(omega::SharedIStream& in);
 
     private:
 

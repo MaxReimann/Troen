@@ -111,6 +111,14 @@ namespace troen
 		std::shared_ptr<networking::ServerManager> getServerManager() { return m_ServerManager; }
 		std::shared_ptr<networking::NetworkManager> getNetworkManager();
 
+
+		void commitSharedData(omega::SharedOStream& out);
+        void updateSharedData(omega::SharedIStream& in);
+
+        void registerSharedListener(SharedDataListener* listener);
+
+
+
 		SplineDeformationRendering* getBendedViews() {
 			return m_deformationRendering;
 		}
@@ -188,6 +196,8 @@ namespace troen
 		std::shared_ptr<networking::ServerManager>  		m_ServerManager;
 		std::shared_ptr<networking::ClientManager>  		m_ClientManager;
 		// std::shared_ptr<omega::Application<TroenOmegaScene> >	m_omegaApp;
+
+		std::vector<SharedDataListener*> 					m_sharedDataListeners;
 
 		ResourcePool m_resourcePool;
 

@@ -70,6 +70,7 @@ namespace troen
 {
 	class TroenGame;
 	class TroenOmegaScene;
+	class SharedDataListener;
 	class GameThread;
 	class TroenGameBuilder;
 	class SampleOSGViewer;

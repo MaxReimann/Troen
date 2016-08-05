@@ -32,6 +32,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_node = new osg::Group();
 	m_pat = new osg::PositionAttitudeTransform();
 
+
 	osg::Matrixd initialTransform;
 	osg::Quat rotationQuat(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
 	initialTransform.makeRotate(rotationQuat);

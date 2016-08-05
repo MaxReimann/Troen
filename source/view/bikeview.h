@@ -10,12 +10,17 @@
 #include "../forwarddeclarations.h"
 #include "abstractview.h"
 #include "../resourcepool.h"
+#include "../omegascene.h"
 
+
+namespace omega {
+	class SharedOStream; //foward declaration
+}
 
 namespace troen
 {
 
-	class BikeView : public AbstractView
+	class BikeView : public AbstractView, public SharedDataListener
 	{
 	public:
 		BikeView(const osg::Vec3 color, ResourcePool* resourcePool);
@@ -34,6 +39,10 @@ namespace troen
 
 		void update();
 		void createPlayerMarker(const osg::Vec3 color);
+
+		void commitSharedData(omega::SharedOStream& out) {}
+        void updateSharedData(omega::SharedIStream& in) {}
+
 
 	private:
 		osg::Vec3 m_playerColor;

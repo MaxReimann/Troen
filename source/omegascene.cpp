@@ -28,9 +28,20 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
+
+TroenOmegaScene::TroenOmegaScene() : omega::EngineModule("TroenOmegaScene")
+{
+    std::cout << "[TroenOmegaScene] instantiate" << std::endl;
+    enableSharedData(); 
+}
+
+
+
 void TroenOmegaScene::initialize()
 {
     std::cout << "[TroenOmegaScene::initialize]" << std::endl;
+
+    myOsg = omegaOsg::OsgModule::instance();
 
     registerCorrectPath();
 
@@ -87,21 +98,6 @@ void TroenOmegaScene::update(const omega::UpdateContext& context)
 
 void TroenOmegaScene::updateOmegaCamera(const osg::Camera* cam)
 {
-    // osg::Vec3d eye, center, up;
-    // // _getTransformation(eye, center, up);
-
-    // cam->getViewMatrixAsLookAt(eye, center, up); 
-
-    // omega::Vector3f oPosVec(eye.x(), eye.y(), eye.z());
-    // omega::Vector3f oUpVec(up.x(), up.y(), up.z());
-    // omega::Vector3f oCenterVec(center.x(), center.y(), center.z());
-
-    
-    // //order is important here, setting lookat before position 
-    // // will result in choppy camera rotation
-    // oCenterVec = getEngine()->getDefaultCamera()->convertWorldToLocalPosition(oCenterVec);
-    // getEngine()->getDefaultCamera()->setPosition(oPosVec);
-    // getEngine()->getDefaultCamera()->lookAt(oCenterVec, oUpVec);
 }
 
 
@@ -118,4 +114,16 @@ void TroenOmegaScene::registerCorrectPath()
 void TroenOmegaScene::handleEvent(const omega::Event& evt)
 {
     m_troenGame->handleEvent(evt);
+}
+
+
+void TroenOmegaScene::commitSharedData(omega::SharedOStream& out)
+{
+    m_troenGame->commitSharedData(out);
+}
+
+
+void TroenOmegaScene::updateSharedData(omega::SharedIStream& in)
+{
+    m_troenGame->updateSharedData(in);
 }

@@ -20,6 +20,8 @@ m_fenceLimitActivated(true)
 	m_model = m_fenceModel = std::make_shared<FenceModel>(this);
 	m_view = m_fenceView = std::shared_ptr<FenceView>(new FenceView(this, player->color(), m_model));
 
+	m_player->getTroenGame()->registerSharedListener(static_cast<SharedDataListener*>(m_fenceView.get()));
+
 	btQuaternion rotation = initialTransform.getRotation();
 	btVector3 position = initialTransform.getOrigin();
 	adjustPositionUsingFenceOffset(rotation, position);
@@ -38,6 +40,10 @@ void FenceController::update(btVector3 position, btQuaternion rotation)
 		m_fenceModel->addFencePart(m_lastPosition, position);
 		m_fenceView->addFencePart(osgLastPosition,osgPosition);
 		m_lastPosition = position;
+		m_fenceView->setFenceUpdated(true);
+	} else
+	{
+		m_fenceView->setFenceUpdated(false);
 	}
 
 	// update fence gap

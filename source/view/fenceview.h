@@ -9,9 +9,14 @@
 #include "../forwarddeclarations.h"
 #include "abstractview.h"
 
+#include "../omegascene.h"
+
+
+namespace omega { class SharedOStream; } //foward declaration
+
 namespace troen
 {
-	class FenceView : public AbstractView
+	class FenceView : public AbstractView, public SharedDataListener
 	{
 	public:
 		FenceView(FenceController* fenceController, const osg::Vec3 color, std::shared_ptr<AbstractModel>& model);
@@ -26,6 +31,11 @@ namespace troen
 
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool val);
+
+		void commitSharedData(omega::SharedOStream& out);
+        void updateSharedData(omega::SharedIStream& in);
+
+        void setFenceUpdated(bool value) { m_fenceUpdated = value; }
 
 	private:
 		void initializeFence();
@@ -48,5 +58,11 @@ namespace troen
 		float m_fenceHeight;
 
 		FenceController* m_fenceController;
+
+		bool m_fenceUpdated;
+		osg::Vec3 m_lastPositionCached;
+		osg::Vec3 m_currentPositionCached;
+		bool m_masterNode;
+		bool m_start;
 	};
 }

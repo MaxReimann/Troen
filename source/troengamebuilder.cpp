@@ -177,7 +177,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	for (auto player : t->m_players)
 	{
 		t->m_sceneNode->addChild(player->bikeController()->getViewNode());
-		// t->m_sceneNode->addChild(player->fenceController()->getViewNode());
+		t->m_sceneNode->addChild(player->fenceController()->getViewNode());
 	}
 
 	t->m_sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
