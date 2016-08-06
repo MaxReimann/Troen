@@ -16,7 +16,7 @@ namespace troen
 {
 	
 	/*! The reflection class is responsible for rendering the scene into a texture and mapping this texture to the level floor.*/
-	class Reflection : public RenderPassListener
+	class Reflection
 	{
 	public:
 		Reflection(osg::ref_ptr<osg::Group> reflectSurface, osg::ref_ptr<osgViewer::View> gameView, osg::ref_ptr<osg::TextureCubeMap> cubeMap, int playerID);
@@ -25,8 +25,6 @@ namespace troen
 		void setReflectMode(bool mode);
 
 		virtual osg::ref_ptr<osg::Group> getReflectionCameraGroup();
-
-		virtual void onRender(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene);
 
 	protected:
 		osg::ref_ptr<osg::Group> m_node;
@@ -39,6 +37,7 @@ namespace troen
 
 		osg::ref_ptr<osg::ClipPlane> m_ReflectionClipPlane;
 		osg::ref_ptr<osg::NodeCallback> m_cameraCallback;
+		osg::ref_ptr<osg::NodeCallback> m_cameraGroupCallback;
 
 	};
 }

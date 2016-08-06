@@ -20,6 +20,7 @@
 #include <osg/LightModel>
 #include <osg/ClipNode>
 #include <osg/ClipPlane>
+#include <osgUtil/CullVisitor>
 
 
 #define OMEGA_NO_GL_HEADERS
@@ -36,6 +37,8 @@
 **
 */
 using namespace troen;
+
+#define ofmsg(fmt, args) omega::omsg(boost::str(boost::format(fmt) args))
 
 
 static osg::ref_ptr<osg::Uniform> g_cameraEyeU = new osg::Uniform("cameraEye", osg::Vec3(0.0, 0.0,0.0));
@@ -89,48 +92,26 @@ inline osg::Matrix buildOsgMatrix( const omega::Matrix4f& matrix )
 class CUpdateCameraCallback : public osg::NodeCallback
 {
 public:	
-	CUpdateCameraCallback() : NodeCallback()
-	{
-	}
-
-	void setContext(const omega::DrawContext* context)
-	{
-		m_context = context;
-	}
+	CUpdateCameraCallback() : NodeCallback(){}
 
 	void operator()(osg::Node *node, osg::NodeVisitor *nv)
 	{
 		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
 		{
 			osg::Camera	*camera = dynamic_cast<osg::Camera *>(node->asGroup()->getChild(0));
+			osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(nv);
 
-			if (camera != NULL && m_context != NULL)
+			if (camera != NULL)
 			{
-				// osg::Matrixd modelView =  buildOsgMatrix( m_omegaCam->getViewTransform().matrix() );
-				osg::Matrixd modelView =  buildOsgMatrix( m_context->modelview.matrix() );
-				osg::Matrixd projection = buildOsgMatrix(m_context->projection.matrix());
-				// osg::Matrixd modelView = buildOsgMatrix(context.modelview.matrix());
-
-				// m_reflectionCamera->setViewMatrix(modelView);
-				camera->setProjectionMatrix(projection);
-				camera->setViewMatrix(modelView);
-
-				omega::Vector3f pos = m_context->camera->getPosition();
-				osg::Vec3 camPos(pos.x(), pos.y(), pos.z());
-
-				g_cameraEyeU->set(camPos);
-
-				// g_cameraEyeU->set(osg::Vec3(0.0, 0.0, 0.0) * m_gameView->getCamera()->getInverseViewMatrix());
-
-				//_m_reflectionCamera->accept(*_cv);
+				camera->setProjectionMatrix(cv->getCurrentCamera()->getProjectionMatrix() );
+				camera->setViewMatrix(cv->getCurrentCamera()->getViewMatrix());
+				g_cameraEyeU->set(cv->getEyePoint());
 			}
 
 		}
 		this->traverse(node, nv);
 	}
 
-protected:
-	const omega::DrawContext* m_context;
 };
 
 
@@ -159,8 +140,8 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 	
 
 
-	m_cameraCallback = new CUpdateCameraCallback();
-	cameraGroup->setCullCallback(m_cameraCallback);
+	m_cameraGroupCallback = new CUpdateCameraCallback();
+	cameraGroup->setCullCallback(m_cameraGroupCallback);
 
 	//beware, that vec4(a,b,c,d) is a plane equation with a,b,c the plane normal and d the plane height
 	m_ReflectionClipPlane = new osg::ClipPlane(0, osg::Vec4d(0.0, 0.0, 1.0, 0.0));
@@ -210,18 +191,6 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 	//reflectSurface->getOrCreateStateSet()->setTextureAttributeAndModes(3, idTexture, osg::StateAttribute::ON);
 	//reflectSurface->getOrCreateStateSet()->addUniform(new osg::Uniform("reflectionAttrib", 3));
 
-}
-
-
-void Reflection::onRender(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene)
-{
-	// osg::Matrixd projection = buildOsgMatrix(context.projection.matrix());
-	// osg::Matrixd modelView = buildOsgMatrix(context.modelview.matrix());
-
-	// m_reflectionCamera->setViewMatrix(modelView);
-	// m_reflectionCamera->setProjectionMatrix(projection);
-	// static_cast<CUpdateCameraCallback*>(m_cameraCallback.get())->setCamera(context.camera);
-	static_cast<CUpdateCameraCallback*>(m_cameraCallback.get())->setContext(&context);
 }
 
 
