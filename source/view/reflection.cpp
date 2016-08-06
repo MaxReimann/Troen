@@ -70,40 +70,6 @@ protected:
 };
 
 
-class CUpdateCameraCallback : public osg::NodeCallback
-{
-public:
-	osg::ref_ptr <osgViewer::View> m_gameView;
-	osg::Matrixd m_reflectionMatrix;
-	
-	CUpdateCameraCallback(osg::ref_ptr <osgViewer::View> view) : NodeCallback()
-	{
-		m_gameView = view;
-		m_reflectionMatrix = osg::Matrixd::scale(1.0, 1.0, -1.0);
-	}
-
-	void operator()(osg::Node *node, osg::NodeVisitor *nv)
-	{
-		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
-		{
-			//osgUtil::CullVisitor	*cv = static_cast<osgUtil::CullVisitor *>(nv);
-			osg::Camera				*camera = static_cast<osg::Camera *>(node->asGroup()->getChild(0));
-
-			camera->setViewMatrix(m_gameView->getCamera()->getViewMatrix());
-			camera->setProjectionMatrix(m_gameView->getCamera()->getProjectionMatrix());
-			
-
-			//g_cameraViewU->set(m_gameView->getCamera()->getViewMatrix());
-
-			g_cameraEyeU->set(osg::Vec3(0.0, 0.0, 0.0) * m_gameView->getCamera()->getInverseViewMatrix());
-
-			//_m_reflectionCamera->accept(*_cv);
-
-		}
-		this->traverse(node, nv);
-	}
-};
-
 
 inline osg::Matrix buildOsgMatrix( const omega::Matrix4f& matrix )
 {
@@ -120,10 +86,58 @@ inline osg::Matrix buildOsgMatrix( const omega::Matrix4f& matrix )
 
 
 
+class CUpdateCameraCallback : public osg::NodeCallback
+{
+public:	
+	CUpdateCameraCallback() : NodeCallback()
+	{
+	}
+
+	void setContext(const omega::DrawContext* context)
+	{
+		m_context = context;
+	}
+
+	void operator()(osg::Node *node, osg::NodeVisitor *nv)
+	{
+		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
+		{
+			osg::Camera	*camera = dynamic_cast<osg::Camera *>(node->asGroup()->getChild(0));
+
+			if (camera != NULL && m_context != NULL)
+			{
+				// osg::Matrixd modelView =  buildOsgMatrix( m_omegaCam->getViewTransform().matrix() );
+				osg::Matrixd modelView =  buildOsgMatrix( m_context->modelview.matrix() );
+				osg::Matrixd projection = buildOsgMatrix(m_context->projection.matrix());
+				// osg::Matrixd modelView = buildOsgMatrix(context.modelview.matrix());
+
+				// m_reflectionCamera->setViewMatrix(modelView);
+				camera->setProjectionMatrix(projection);
+				camera->setViewMatrix(modelView);
+
+				omega::Vector3f pos = m_context->camera->getPosition();
+				osg::Vec3 camPos(pos.x(), pos.y(), pos.z());
+
+				g_cameraEyeU->set(camPos);
+
+				// g_cameraEyeU->set(osg::Vec3(0.0, 0.0, 0.0) * m_gameView->getCamera()->getInverseViewMatrix());
+
+				//_m_reflectionCamera->accept(*_cv);
+			}
+
+		}
+		this->traverse(node, nv);
+	}
+
+protected:
+	const omega::DrawContext* m_context;
+};
+
+
+
 Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewer::View> gameView, osg::ref_ptr<osg::TextureCubeMap> cubeMap, int playerID )
 
 {
-	//osg::Group		*group = new osg::Group();
 	int texSize = 1024;
 	// Set up the reflection camera
 	cameraGroup = new osg::Group();
@@ -144,7 +158,9 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 	m_reflectionCamera->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting",true));
 	
 
-	// cameraGroup->setCullCallback(new CUpdateCameraCallback(gameView));
+
+	m_cameraCallback = new CUpdateCameraCallback();
+	cameraGroup->setCullCallback(m_cameraCallback);
 
 	//beware, that vec4(a,b,c,d) is a plane equation with a,b,c the plane normal and d the plane height
 	m_ReflectionClipPlane = new osg::ClipPlane(0, osg::Vec4d(0.0, 0.0, 1.0, 0.0));
@@ -199,14 +215,13 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 
 void Reflection::onRender(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene)
 {
-	osg::Matrixd projection = buildOsgMatrix(context.projection.matrix());
-	osg::Matrixd modelView = buildOsgMatrix(context.modelview.matrix());
+	// osg::Matrixd projection = buildOsgMatrix(context.projection.matrix());
+	// osg::Matrixd modelView = buildOsgMatrix(context.modelview.matrix());
 
-	m_reflectionCamera->setViewMatrix(modelView);
-	m_reflectionCamera->setProjectionMatrix(projection);
-	
-	osg::Matrixd modelViewInv = osg::Matrixd::inverse(modelView); //TODO: How to actually only get the view matrix?
-	g_cameraEyeU->set(osg::Vec3(0.0, 0.0, 0.0) * modelViewInv);
+	// m_reflectionCamera->setViewMatrix(modelView);
+	// m_reflectionCamera->setProjectionMatrix(projection);
+	// static_cast<CUpdateCameraCallback*>(m_cameraCallback.get())->setCamera(context.camera);
+	static_cast<CUpdateCameraCallback*>(m_cameraCallback.get())->setContext(&context);
 }
 
 

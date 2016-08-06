@@ -38,6 +38,7 @@ namespace troen
 		osg::ref_ptr<osg::ClipNode>			m_reflectionClipNode;
 
 		osg::ref_ptr<osg::ClipPlane> m_ReflectionClipPlane;
+		osg::ref_ptr<osg::NodeCallback> m_cameraCallback;
 
 	};
 }
