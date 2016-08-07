@@ -289,8 +289,7 @@ void BikeController::attachTrackingCamera(NodeFollowCameraManipulator* manipulat
 
 
 
-	m_cameraController = 
-		std::make_shared<ManipulatorController>( omega::Engine::instance()->getDefaultCamera() );
+	m_cameraController = new ManipulatorController( omega::Engine::instance()->getDefaultCamera() );
 
 
 		// set the actual node as the track node, not the pat

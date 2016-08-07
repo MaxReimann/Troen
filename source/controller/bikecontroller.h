@@ -122,7 +122,8 @@ namespace troen
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
 		std::shared_ptr<input::RemotePlayer> m_remote;
 
-		std::shared_ptr<ManipulatorController> m_cameraController;
+		//not smart_ptr: not actually owned by this object but by omega::enginemodule
+		ManipulatorController* m_cameraController;
 		
 
 
