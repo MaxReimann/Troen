@@ -45,6 +45,7 @@ bool TroenGameBuilder::build()
 {
 
 
+	omega::SystemManager* osys = omega::SystemManager::instance();
 	t->m_rootNode = new osg::Group;
 	t->m_sceneNode = new osg::Group;
 
@@ -66,16 +67,19 @@ bool TroenGameBuilder::build()
 	// Sound
 	//
 	////////////////////////////////////////////////////////////////////////////////
-	std::cout << "[TroenGame::build] sound ..." << std::endl;
-	t->m_audioManager = std::shared_ptr<sound::AudioManager>(new sound::AudioManager);
-	t->m_audioManager->LoadSFX("data/sound/explosion.wav");
-	t->m_audioManager->LoadSong("data/sound/theGameHasChanged.mp3");
-	t->m_audioManager->LoadEngineSound();
-	t->m_audioManager->SetSongsVolume(0.5);
+	if (osys->isMaster()) //dont playback sounds on childs, causes crashes 
+	{
+		std::cout << "[TroenGame::build] sound ..." << std::endl;
+		t->m_audioManager = std::shared_ptr<sound::AudioManager>(new sound::AudioManager);
+		t->m_audioManager->LoadSFX("data/sound/explosion.wav");
+		t->m_audioManager->LoadSong("data/sound/theGameHasChanged.mp3");
+		t->m_audioManager->LoadEngineSound();
+		t->m_audioManager->SetSongsVolume(0.5);
 
-	t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
-	t->m_audioManager->PlayEngineSound();
-	t->m_audioManager->SetMasterVolume(0.f);
+		t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
+		t->m_audioManager->PlayEngineSound();
+		t->m_audioManager->SetMasterVolume(0.f);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -100,12 +104,17 @@ bool TroenGameBuilder::build()
 	std::cout << "[TroenGame::build] controllers (models & views) ..." << std::endl;
 	{ // controllers
 		t->m_levelController = std::make_shared<LevelController>(t, t->m_gameConfig->levelName);
+		std::cout << omega::SystemManager::instance()->getHostnameAndPort() 
+			<< " config: num players: " << t->m_gameConfig->numberOfPlayers << std::endl;
+
 		for (int i = 0; i < t->m_gameConfig->numberOfPlayers; i++)
 		{
 			std::shared_ptr<Player> player = std::make_shared<Player>(t, t->m_gameConfig, i);
 			t->m_players.push_back(player);
+			std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " player ownView: " << t->m_gameConfig->ownView[i] << std::endl;
 			if (t->m_gameConfig->ownView[i])
 			{
+    			std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " adding player with view" << std::endl;
 				t->m_playersWithView.push_back(player);
 			}
 		}
@@ -324,9 +333,11 @@ bool TroenGameBuilder::destroy()
 	t->m_players.clear();
 	t->m_playersWithView.clear();
 
-	t->m_audioManager->StopSFXs();
-	t->m_audioManager->StopSongs();
-	t->m_audioManager.reset();
+	if (omega::SystemManager::instance()->isMaster()){
+		t->m_audioManager->StopSFXs();
+		t->m_audioManager->StopSongs();
+		t->m_audioManager.reset();
+	}
 
 	shaders::m_allShaderPrograms.clear();
 

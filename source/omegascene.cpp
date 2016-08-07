@@ -75,11 +75,13 @@ void TroenOmegaScene::initialize()
     mySceneNode = omega::SceneNode::create("osgRoot");
     mySceneNode->addComponent(oso);
 
-    myOsg->setRenderPassListener(myRenderPassListener.get());
+    // myOsg->setRenderPassListener(myRenderPassListener.get());
     myOsg->setAutoNearFar(true);
     // disable culling to make sure reflected geoemtry is drawn
     getEngine()->getDefaultCamera()->setCullingEnabled(false);
     // myRoot->setScale(0.05f, 0.05f, 0.05f);
+
+    std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " omegascene initialized" << std::endl; 
 
 
     // osgDB::writeNodeFile(*(m_scene).get(), "saved.osg");

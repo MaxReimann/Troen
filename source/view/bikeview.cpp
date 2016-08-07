@@ -259,3 +259,29 @@ void BikeView::createPlayerMarker(osg::Vec3 color)
 	m_playermarkerNode = PlayerMarker(color).getNode();
 	// m_pat->addChild(m_playermarkerNode);
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// only run on master
+void BikeView::commitSharedData(omega::SharedOStream& out)
+{
+	// std::cout << "comitting shared data" << std::endl;
+	// m_masterNode = true;
+	out << m_pat->getPosition() << m_pat->getAttitude();
+	// out << 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// only run on slaves!
+void BikeView::updateSharedData(omega::SharedIStream& in)
+{
+	// std::cout << "updating shared data" << std::endl;
+	// m_masterNode = false;
+	osg::Vec3d pos;
+	osg::Quat attitude;
+	in >> pos >> attitude;
+
+	m_pat->setPosition(pos);
+	m_pat->setAttitude(attitude);
+
+}

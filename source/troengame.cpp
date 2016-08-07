@@ -83,6 +83,8 @@ void TroenGame::prepareGame(const GameConfig& gameConfig)
 	m_gameTimer->start();
 	m_gameTimer->pause();
 	// startGameLoop();
+
+	
 }
 
 
@@ -117,7 +119,6 @@ void TroenGame::stepGameOmega()
 
 	}
 
-
 	// GAME LOOP VARIABLES
 	static long double nextTime = m_gameloopTimer->elapsed();
 	const double minMillisecondsBetweenFrames = 16.7; // vSync to 60 fps
@@ -125,6 +126,8 @@ void TroenGame::stepGameOmega()
 	static int skippedFrames = 0;
 	const int maxSkippedFrames = 4;
 	static	bool nearPlaneAdapted = false;
+
+	omega::SystemManager* osys = omega::SystemManager::instance();
 
 
 
@@ -142,37 +145,42 @@ void TroenGame::stepGameOmega()
 		// assign the time for the next update
 		nextTime += minMillisecondsBetweenFrames;
 
-
-		// LOOP REALLY STARTS HERE:
-		m_gameLogic->step(g_gameLoopTime, g_gameTime);
-		if (!m_gameTimer->paused())
+		// only the master is responsible for updating logic, sounds, etc.
+		if (osys->isMaster())
 		{
-			for (auto player : m_players)
+			// LOOP REALLY STARTS HERE:
+			m_gameLogic->step(g_gameLoopTime, g_gameTime);
+
+		
+			if (!m_gameTimer->paused())
 			{
-				player->update(g_gameTime);
+				for (auto player : m_players)
+				{
+					player->update(g_gameTime);
+				}
+				m_physicsWorld->stepSimulation(g_gameTime);
+				m_levelController->update();
 			}
-			m_physicsWorld->stepSimulation(g_gameTime);
-			m_levelController->update();
+
 		}
-
-
 
 		if (isNetworking())
 			getNetworkManager()->update(g_gameTime);
 
-
-		m_audioManager->Update(g_gameLoopTime / 1000);
-		m_audioManager->setMotorSpeed(m_players[0]->bikeController()->speed());
+		if (osys->isMaster())
+		{
+			m_audioManager->Update(g_gameLoopTime / 1000);
+			m_audioManager->setMotorSpeed(m_players[0]->bikeController()->speed());
+	
+			if (m_postProcessing)
+				m_postProcessing->setBeat(m_audioManager->getTimeSinceLastBeat());
+		}
 
 		// Hack: normalize and use the speed to control the deformation
 		float bikeSpeed = m_players[0]->bikeController()->speed();
 		float maxSpeed = 400.f;
 
 		handleBending(double(bikeSpeed / maxSpeed));
-
-
-		if (m_postProcessing)
-			m_postProcessing->setBeat(m_audioManager->getTimeSinceLastBeat());
 
 		// do we have extra time (to draw the frame) or did we skip too many frames already?
 		if (g_gameLoopTime < nextTime || (skippedFrames > maxSkippedFrames))
@@ -316,7 +324,8 @@ void TroenGame::returnFromFullScreen()
 
 void TroenGame::switchSoundVolumeEvent()
 {
-	m_audioManager->SetMasterVolume(1 - m_audioManager->GetMasterVolume());
+	if (omega::SystemManager::instance()->isMaster())
+		m_audioManager->SetMasterVolume(1 - m_audioManager->GetMasterVolume());
 }
 
 void TroenGame::pauseEvent()
@@ -419,7 +428,6 @@ void TroenGame::registerRenderPassListener(RenderPassListener* listener)
 
 void TroenGame::commitSharedData(omega::SharedOStream& out)
 {
-	std::cout << "[troengame] commit shared data" << std::endl;
     for (auto listener : m_sharedDataListeners)
     {
     	listener->commitSharedData(out);

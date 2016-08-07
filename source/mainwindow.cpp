@@ -245,6 +245,9 @@ MainWindow::MainWindow(CArguments& arguments, QWidget * parent)
 
 	// settings
 	m_settingsFileName = QDir::currentPath() + "/settings.ini";
+	// std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " config: " << m_settingsFileName.toStdString() << std::endl;
+	m_settingsFileName = (std::string( omega::ogetcwd() ) + "/settings.ini").c_str() ;
+	// std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " config: " << m_settingsFileName.toStdString() << std::endl;
 	loadSettings();
 
 	// create GameThread and Game
@@ -509,6 +512,8 @@ void MainWindow::loadSettings()
 
 GameConfig MainWindow::loadSettingsToConfig()
 {
+
+	std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " config: " << m_settingsFileName.toStdString() << std::endl;
 	QSettings settings(m_settingsFileName, QSettings::IniFormat);
 
 	GameConfig config;
@@ -522,6 +527,7 @@ GameConfig MainWindow::loadSettingsToConfig()
 		config.playerInputTypes[i] = settings.value("player" + QString::number(i) + "input").toInt();
 		config.playerNames[i] = settings.value("player" + QString::number(i) + "name").toString();
 		config.playerColors[i] = settings.value("player" + QString::number(i) + "color").value<QColor>();
+		config.ownView[i] = settings.value("player" + QString::number(i) + "ownView").toBool();
 	}
 	config.levelName = m_levelComboBox->itemText(settings.value("level").toInt()).toStdString();
 	config.fullscreen = false; //TODO: set approtae value

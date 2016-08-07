@@ -40,10 +40,6 @@ void FenceController::update(btVector3 position, btQuaternion rotation)
 		m_fenceModel->addFencePart(m_lastPosition, position);
 		m_fenceView->addFencePart(osgLastPosition,osgPosition);
 		m_lastPosition = position;
-		m_fenceView->setFenceUpdated(true);
-	} else
-	{
-		m_fenceView->setFenceUpdated(false);
 	}
 
 	// update fence gap

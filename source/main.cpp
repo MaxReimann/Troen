@@ -64,8 +64,11 @@ int main(int argc, char* argv[])
 
 	bool remoteStart = false;
 
+	std::cout << "Troen started with: ";
+
     for (int i=0; i < argc; i++)
     {
+    	std::cout << argv[i] << " ";
     	if (strcmp(argv[i], "--troen-remote-start") == 0 )
     	{
     		remoteStart = true;
@@ -74,6 +77,8 @@ int main(int argc, char* argv[])
     		unprocessedOptions.push_back(argv[i]);
     	}
     }
+
+   	std::cout << std::endl;
 
 
     CArguments args;

@@ -12,6 +12,10 @@
 #include "../controller/bikecontroller.h"
 #include "../sound/audiomanager.h"
 
+
+#define OMEGA_NO_GL_HEADERS
+#include <omega.h>
+
 #include <ctime>
 
 using namespace troen;
@@ -217,9 +221,13 @@ void PhysicsWorld::initializeWorld()
 
 	m_world->setGravity(DEFAULT_GRAVITY);
 	
-	//using callbacks is the preffered way to handle collision events, 
-	//the bullet wiki promises, that are no invalid pointers when using this callback
-	m_world->setInternalTickCallback(tickCallback, static_cast<void *>(this));
+	// dont ever handle collisions on slave nodes
+	if (omega::SystemManager::instance()->isMaster())
+	{
+		//using callbacks is the preffered way to handle collision events, 
+		//the bullet wiki promises, that are no invalid pointers when using this callback
+		m_world->setInternalTickCallback(tickCallback, static_cast<void *>(this));
+	}
 }
 
 void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody> >& bodies, const short group/*=0*/, const short mask/*=0*/)

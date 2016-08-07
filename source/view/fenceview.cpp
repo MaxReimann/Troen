@@ -25,6 +25,7 @@ m_fenceController(fenceController), m_masterNode(false)
 	initializeFence();
 	initializeShader();
 	m_start = false;
+	m_fenceCleared = false;
 }
 
 void FenceView::initializeFence()
@@ -163,10 +164,11 @@ void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 
 	m_drawArrays->setCount(m_coordinates->size());
 
-	if (m_masterNode)
+	if (omega::SystemManager::instance()->isMaster())
 	{
 		m_currentPositionCached = currentPosition;
 		m_lastPositionCached = lastPosition;
+		m_fenceUpdated = true;
 	}
 
 
@@ -182,6 +184,7 @@ void FenceView::removeAllFences()
 	}
 	m_radarFenceBoxes.clear();
 	initializeFence();
+	m_fenceCleared = true;
 }
 
 void FenceView::enforceFencePartsLimit()
@@ -236,21 +239,26 @@ void FenceView::setBendingActive(bool val)
 // send all the verts, faces, normals, colours, etc
 void FenceView::commitSharedData(omega::SharedOStream& out)
 {
-	std::cout << "comitting shared data" << std::endl;
-	m_masterNode = true;
-	out << m_fenceUpdated << m_lastPositionCached << m_currentPositionCached;
-	// out << 
+	// std::cout << "comitting shared data" << std::endl;
+	out << m_fenceUpdated << m_lastPositionCached << m_currentPositionCached << m_fenceCleared;
+
+	// clear per frame states
+	m_fenceUpdated = false;
+	m_fenceCleared = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // only run on slaves!
 void FenceView::updateSharedData(omega::SharedIStream& in)
 {
-	std::cout << "updating shared data" << std::endl;
-	m_masterNode = false;
-	in >> m_fenceUpdated >> m_lastPositionCached >> m_currentPositionCached;
+	// std::cout << "updating shared data" << std::endl;
+	in >> m_fenceUpdated >> m_lastPositionCached >> m_currentPositionCached >> m_fenceCleared;
+	if (m_fenceCleared)
+		removeAllFences();
+
 	if (m_fenceUpdated)
 		addFencePart(m_lastPositionCached, m_currentPositionCached);
+
 
 	updateFenceGap(m_lastPositionCached, m_currentPositionCached);
 

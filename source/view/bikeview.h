@@ -40,8 +40,8 @@ namespace troen
 		void update();
 		void createPlayerMarker(const osg::Vec3 color);
 
-		void commitSharedData(omega::SharedOStream& out) {}
-        void updateSharedData(omega::SharedIStream& in) {}
+		void commitSharedData(omega::SharedOStream& out);
+        void updateSharedData(omega::SharedIStream& in);
 
 
 	private:

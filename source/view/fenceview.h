@@ -59,10 +59,13 @@ namespace troen
 
 		FenceController* m_fenceController;
 
+
+		// methods for syncing the fence on the nodes
 		bool m_fenceUpdated;
 		osg::Vec3 m_lastPositionCached;
 		osg::Vec3 m_currentPositionCached;
 		bool m_masterNode;
 		bool m_start;
+		bool m_fenceCleared;
 	};
 }
