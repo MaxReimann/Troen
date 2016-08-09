@@ -41,24 +41,6 @@ int main(int argc, char* argv[])
 	QApplication application(argc, argv);
 
 
-	// QCommandLineParser parser;
- //    parser.setApplicationDescription("Troen: An action packed 3D-remake of the classic Armagetron featuring polished graphics, customizable maps, powerups, scriptable AI, multiplayer and many more!");
- //    parser.addHelpOption();
- //    parser.addVersionOption();
-
- //    parser.addOptions({
- //        // A boolean option with multiple names (-f, --force)
- //        {"troen-remote-start",
- //            QCoreApplication::translate("main", "Remote rendering client startup. Does not open qt window")},
- //    });
-
-
-
-    // // Process the actual command line arguments given by the user
-    // parser.process(application);
-
-    // bool remoteStart = parser.isSet("troen-remote-start");
-
 	std::vector<char*> unprocessedOptions;
 	int numPassedOptions = argc;
 

@@ -12,21 +12,38 @@ using namespace troen;
 
 
 
+MyOsgModule* MyOsgModule::m_instance = NULL;
 
 void MyRenderPassListener::onFrameFinished(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene){
 
-    //fix culling
-    double fovy, aspect, znear, zfar;
-    scene->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
-    scene->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-    znear = 1.0;
-    scene->getCamera()->setProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
 
     for (auto listener : m_game->getRenderPassListeners())
     {
         listener->onRender(client, context, scene);
     }
 
+}
+
+MyRenderPassListener::MyRenderPassListener(TroenGame* game) : m_game(game) {}
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+void MyOsgModule::initializeRenderer(omega::Renderer* r)
+{
+    omegaOsg::OsgModule::initializeRenderer(r);
+}
+
+
+MyOsgModule* MyOsgModule::instance() 
+{ 
+    if(m_instance == NULL)
+    {
+        m_instance = new MyOsgModule();
+        omega::ModuleServices::addModule(m_instance);
+        m_instance->doInitialize(omega::Engine::instance());
+    }
+    return m_instance; 
 }
 
 
@@ -45,7 +62,7 @@ void TroenOmegaScene::initialize()
 {
     std::cout << "[TroenOmegaScene::initialize]" << std::endl;
 
-    myOsg = omegaOsg::OsgModule::instance();
+    myOsg = MyOsgModule::instance();
 
     registerCorrectPath();
 
@@ -55,15 +72,6 @@ void TroenOmegaScene::initialize()
     m_troenGame->prepareGame(*GameThread::getInstance()->getGameConfig());
 
     myRenderPassListener = std::make_shared<MyRenderPassListener>(m_troenGame);
-
-    // Load osg object
-    if(omega::SystemManager::settingExists("config/scene"))
-    {
-        omega::Setting& sscene = omega::SystemManager::settingLookup("config/scene");
-        // sModelName = omega::Config::getStringValue("filename", sscene, sModelName);
-        // sModelSize = omega::Config::getFloatValue("size", sscene, sModelSize);
-    }
-
 
     // Create an omegalib scene node and attach the root osg node to it. This is used to interact with the 
     // osg object through omegalib interactors.
@@ -75,22 +83,9 @@ void TroenOmegaScene::initialize()
     mySceneNode = omega::SceneNode::create("osgRoot");
     mySceneNode->addComponent(oso);
 
-    // myOsg->setRenderPassListener(myRenderPassListener.get());
-    myOsg->setAutoNearFar(true);
-    // disable culling to make sure reflected geoemtry is drawn
-    getEngine()->getDefaultCamera()->setCullingEnabled(false);
-    // myRoot->setScale(0.05f, 0.05f, 0.05f);
-
+    myOsg->setRenderPassListener(myRenderPassListener.get());
+    myOsg->setAutoNearFar(false);
     std::cout << omega::SystemManager::instance()->getHostnameAndPort() << " omegascene initialized" << std::endl; 
-
-
-    // osgDB::writeNodeFile(*(m_scene).get(), "saved.osg");
-
-
-    // Set the osg node as the root node
-    // myOsg->setRootNode();
-
-    // root->addChild(ls);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

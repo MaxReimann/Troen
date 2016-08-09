@@ -14,13 +14,15 @@
 // troen
 #include "../forwarddeclarations.h"
 #include "abstractview.h"
+#include "../troengame.h"
+#include <omegaOsg/omegaOsg/SceneView.h>
 
 
 namespace troen
 {
 
 	/*! The PostProcessing class manages the post processing pipeline by adding additional cameras to the scene. Rendering-to-texture and ping pong rendering is used here. */
-	class PostProcessing : public AbstractView //, public osg::Referenced
+	class PostProcessing : public AbstractView, public RenderPassListener
 	{
 	public:
 		PostProcessing(osg::ref_ptr<osg::Group> rootNode, const int width, const int height);
@@ -35,6 +37,8 @@ namespace troen
 
 		void attachGBufferShaderProgram(osg::ref_ptr<osg::StateSet> state);
 		void attachPostShaderProgram(osg::ref_ptr<osg::StateSet> state);
+
+        virtual void onRender(omega::Renderer* client, const omega::DrawContext& context, omegaOsg::SceneView* scene) {};
 		//void attachSkeletonShaderProgram(osg::ref_ptr<osg::StateSet> state);
 		//void attachDistanceTransformShaderProgram(osg::ref_ptr<osg::StateSet> state, TEXTURE_CONTENT inputTexture, TEXTURE_CONTENT outputTexture, SHADER_PROGRAM_TYPES type, int step);
 
@@ -43,7 +47,8 @@ namespace troen
 
 	protected:
 		osg::ref_ptr<osg::Camera> gBufferPass();
-		osg::ref_ptr<osg::Camera> postProcessingPass();
+		osg::ref_ptr<osg::Camera> postProcessingPass(int pass);
+		void setupPostCameras();
 		//osg::ref_ptr<osg::Camera> distanceTransformPass(int order, TEXTURE_CONTENT inputTexture, TEXTURE_CONTENT outputTexture, SHADER_PROGRAM_TYPES type, int step);
 
 		std::vector<osg::ref_ptr<osg::Texture2D> > m_fboTextures;
@@ -54,6 +59,7 @@ namespace troen
 
 		int m_width;
 		int m_height;
+		bool m_firstFrame;
 		std::vector<int> pingpongPasses;
 	};
 }

@@ -23,12 +23,42 @@ static osg::ref_ptr<osg::Uniform> g_nearFarUniform = new osg::Uniform("nearFar",
 
 using namespace troen;
 
+
+
+class CUpdateCameraCallback : public osg::NodeCallback
+{
+public:	
+	CUpdateCameraCallback() : NodeCallback(){}
+
+	void operator()(osg::Node *node, osg::NodeVisitor *nv)
+	{
+		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
+		{
+			osg::Camera	*camera = dynamic_cast<osg::Camera *>(node->asGroup()->getChild(0));
+			osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(nv);
+
+			if (camera != NULL)
+			{
+				camera->setProjectionMatrix(cv->getCurrentCamera()->getProjectionMatrix() );
+				camera->setViewMatrix(cv->getCurrentCamera()->getViewMatrix());
+				// g_cameraEyeU->set(cv->getEyePoint());
+			}
+
+		}
+		this->traverse(node, nv);
+	}
+
+};
+
+
 PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int height)
 :m_root(rootNode), m_sceneNode(new osg::Group()), m_width(width), m_height(height)
 {
 	AbstractView();
 	// init textures, will be recreated when screen size changes
 	setupTextures(m_width, m_height);
+
+	std::cout << "setting up postprocessing fbo tex with size w: " << width << " h: " << height << std::endl;
 
 	// create shaders
 	shaders::reloadShaders();
@@ -41,6 +71,9 @@ PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int
 	unsigned int pass = 0;
 	m_allCameras.push_back(gBufferPass()); 
 	m_root->addChild(m_allCameras[pass++]);
+
+	// auto cameraGroupCallback = new CUpdateCameraCallback();
+	// m_root->setCullCallback(cameraGroupCallback);
 	
 	// 2. prepare pass: render id buffer as seeds into PONG texture
 	//TEXTURE_CONTENT pingPong[] = { PING, PONG };
@@ -55,7 +88,7 @@ PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int
 	m_allCameras.push_back(pingPongPass(pass, PING, PONG, shaders::VBLUR, -1.0));
 	m_root->addChild(m_allCameras[pass++]);
 
-	m_allCameras.push_back(postProcessingPass());
+	m_allCameras.push_back(postProcessingPass(pass));
 	m_root->addChild(m_allCameras[m_allCameras.size() - 1]);
 }
 
@@ -127,6 +160,13 @@ void PostProcessing::setupTextures(const unsigned int & width, const unsigned in
 }
 
 
+
+
+
+
+
+
+
 // create gbuffer creation camera
 osg::ref_ptr<osg::Camera> PostProcessing::gBufferPass()
 {
@@ -135,14 +175,18 @@ osg::ref_ptr<osg::Camera> PostProcessing::gBufferPass()
 	// output textures
 	cam->attach((osg::Camera::BufferComponent)(osg::Camera::COLOR_BUFFER0 + COLOR), m_fboTextures[COLOR]);
 	cam->attach((osg::Camera::BufferComponent)(osg::Camera::COLOR_BUFFER0 + ID), m_fboTextures[ID]);
+	cam->setRenderOrder( osg::Camera::PRE_RENDER );
 
 	// Configure fboCamera to draw fullscreen textured quad
 	// black clear color
 	cam->setClearColor(osg::Vec4(0.0, 0.0, 0.5, 1.0));
 	cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
-	cam->setReferenceFrame(osg::Camera::RELATIVE_RF);
+	cam->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
 	cam->addChild(m_sceneNode);
+
+
+
 
 
 	return cam;
@@ -202,7 +246,7 @@ void PostProcessing::setBeat(float beat)
 }
 
 // create post processing pass to put it all together
-osg::ref_ptr<osg::Camera> PostProcessing::postProcessingPass()
+osg::ref_ptr<osg::Camera> PostProcessing::postProcessingPass(int pass)
 {
 	osg::ref_ptr<osg::Camera> postRenderCamera(new osg::Camera());
 
@@ -212,7 +256,7 @@ osg::ref_ptr<osg::Camera> PostProcessing::postProcessingPass()
 	// configure postRenderCamera to draw fullscreen textured quad
 	postRenderCamera->setClearColor(osg::Vec4(0.0, 0.5, 0.0, 1)); // should never see this.
 	postRenderCamera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
-	postRenderCamera->setRenderOrder(osg::Camera::POST_RENDER);
+	postRenderCamera->setRenderOrder(osg::Camera::POST_RENDER, pass);
 
 	// geometry
 	osg::Geode* geode(new osg::Geode());

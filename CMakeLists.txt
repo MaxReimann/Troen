@@ -130,8 +130,8 @@ find_package(OpenGL REQUIRED)
 
 
 #set(OMEGA_BINARY_DIR /local/omegalib/build/bin )
-set(Omegalib_DIR /local/omegalib/build)
-set(OmegaLib_SOURCE_DIR /local/omegalib/)
+set(OmegaLib_SOURCE_DIR /da/sw/omegalib/omegalib.dev/)
+set(Omegalib_DIR /da/sw/omegalib/omegalib.dev/build)
 find_package(Omegalib)
 
 # # OpenSceneGraph
@@ -213,8 +213,8 @@ set(sources
 	source/input/keyboard.cpp
 	source/input/gamepad.h
 	source/input/gamepad.cpp
-	source/input/gamepadps4.h
-	source/input/gamepadps4.cpp
+	source/input/gamepadvrpn.h
+	source/input/gamepadvrpn.cpp
 	source/input/bikeinputstate.h
 	source/input/bikeinputstate.cpp
 	source/input/ai.h

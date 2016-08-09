@@ -119,6 +119,10 @@ void TroenGame::stepGameOmega()
 
 	}
 
+	// auto mconfig = omega::SystemManager::instance()->getMultiInstanceConfig();
+	// std::cout << "W;" << mconfig.tilew << "h:" << mconfig.tileh << std::endl;
+
+
 	// GAME LOOP VARIABLES
 	static long double nextTime = m_gameloopTimer->elapsed();
 	const double minMillisecondsBetweenFrames = 16.7; // vSync to 60 fps
@@ -195,17 +199,17 @@ void TroenGame::stepGameOmega()
 					m_players);
 			}
 
-			// for (auto player : m_playersWithView)
-			// {
-			// 	player->viewer()->frame();
-			// }
+
 			// TODO: find a way to eleminate this workaround
 			// doesn't work if it's executed earlier
 			if (!nearPlaneAdapted)
 			{
 				for (auto player : m_playersWithView)
 				{
-					fixCulling(player->gameView());
+					float znear = 1.0;
+					// hack: set the near far maunally, wsince we know the skydome has a radius of 5000
+					omega::Engine::instance()->getDefaultCamera()->setNearFarZ(znear, 10000);
+					// fixCulling(player->gameView());
 				}
 			}
 			skippedFrames = 0;
@@ -242,6 +246,7 @@ void TroenGame::fixCulling(osg::ref_ptr<osgViewer::View> view)
 	view->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 	znear = 1.0;
 	view->getCamera()->setProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
+
 }
 
 void TroenGame::handleBending(double interpolationSkalar)

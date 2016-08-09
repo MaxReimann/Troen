@@ -28,7 +28,7 @@
 #include "util/chronotimer.h"
 #include "util/gldebugdrawer.h"
 #include "sound/audiomanager.h"
-#include "input/gamepadps4.h"
+#include "input/gamepadvrpn.h"
 #ifdef WIN32
 #include "input/gamepad.h"
 #endif
@@ -156,15 +156,19 @@ bool TroenGameBuilder::composeSceneGraph()
 	{
 		// viewport of all windows has to be equal since only
 		// the first is taken for PostProcessing Texture Sizes
-		osg::Viewport * viewport =
-			t->m_players[0]->gameView()->getCamera()->getViewport();
+		// osg::Viewport * viewport =
+		// 	t->m_players[0]->gameView()->getCamera()->getViewport();
 
-		t->m_postProcessing = std::make_shared<PostProcessing>(t->m_rootNode, viewport->width(), viewport->height());
+		auto pixSize = omega::SystemManager::instance()->getDisplaySystem()->getDisplayConfig().tileResolution;
 
+		t->m_postProcessing = std::make_shared<PostProcessing>(t->m_rootNode, pixSize.x(), pixSize.y());
+		t->registerRenderPassListener(t->m_postProcessing.get());
+
+		// t->m_sceneWithSkyboxNode = t->m_rootNode;
 		t->m_sceneWithSkyboxNode = t->m_postProcessing->getSceneNode();
 
 		//explicit call, to enable glow from start
-		t->resize(viewport->width(), viewport->height());
+		t->resize(pixSize.x(), pixSize.y());
 	}
 	else
 	{
@@ -176,8 +180,8 @@ bool TroenGameBuilder::composeSceneGraph()
 			player->playerNode()->addChild(t->m_rootNode);
 	}
 
-	//t->m_skyDome->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
-	// t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
+	t->m_skyDome->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
+	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
 	t->m_sceneWithSkyboxNode->addChild(t->m_sceneNode);
 
 	t->m_sceneNode->addChild(t->m_levelController->getViewNode());
@@ -313,7 +317,7 @@ bool TroenGameBuilder::destroy()
 #ifdef WIN32
 	input::Gamepad::clearPorts();
 #endif
-	input::GamepadPS4::reset();
+	input::GamepadVRPN::reset();
 	t->m_statsHandler = NULL;
 
 	t->m_physicsWorld.reset();

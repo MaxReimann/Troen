@@ -18,7 +18,7 @@
 
 #include "../input/keyboard.h"
 #include "../input/gamepad.h"
-#include "../input/gamepadps4.h"
+#include "../input/gamepadvrpn.h"
 #include "../input/ai.h"
 #include "../input/pollingdevice.h"
 #include "../interpolate.h"
@@ -131,8 +131,8 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 		initializeGamepad(bikeInputState);
 		break;
 #endif
-	case input::BikeInputState::GAMEPADPS4:
-		initializeGamepadPS4(bikeInputState);
+	case input::BikeInputState::GAMEPADVRPN:
+		initializeGamepadVRPN(bikeInputState);
 		break;
 	case input::BikeInputState::AI:
 		initializeAI(bikeInputState);
@@ -160,8 +160,8 @@ void BikeController::handleEvent(const omega::Event& evt)
 		initializeGamepad(bikeInputState);
 		break;
 #endif
-	case input::BikeInputState::GAMEPADPS4:
-		// initializeGamepadPS4(bikeInputState);
+	case input::BikeInputState::GAMEPADVRPN:
+		// initializeGamepadVRPN(bikeInputState);
 		m_pollingThread->handleEvent(evt);
 		break;
 	case input::BikeInputState::AI:
@@ -237,17 +237,17 @@ void BikeController::initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeI
 }
 #endif
 
-void BikeController::initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bikeInputState)
+void BikeController::initializeGamepadVRPN(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
-	input::GamepadPS4* gamepad = new input::GamepadPS4(bikeInputState, m_player->color());
+	input::GamepadVRPN* gamepad = new input::GamepadVRPN(bikeInputState, m_player->color());
 
 	if (gamepad->checkConnection())
 	{
-		std::cout << "[TroenGame::initializeInput] PS4 Controller connected" << std::endl;
+		std::cout << "[TroenGame::initializeInput] VRPN Controller connected" << std::endl;
 	}
 	else
 	{
-		std::cout << "[TroenGame::initializeInput] No PS4 Controller connected!" << std::endl;
+		std::cout << "[TroenGame::initializeInput] No VRPN Controller connected!" << std::endl;
 	}
 	m_pollingThread = gamepad;
 	m_pollingThread->start();
