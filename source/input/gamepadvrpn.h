@@ -17,15 +17,13 @@ namespace input
 	public:
 		GamepadVRPN(osg::ref_ptr<BikeInputState> bikeInputState, osg::Vec3 color);
 		~GamepadVRPN();
-		enum PS4KEY {
-			UP_PRESSED, DOWN_PRESSED, LEFT_PRESSED, RIGHT_PRESSED, ONE_PRESSED, TWO_PRESSED, THREE_PRESSED, FOUR_PRESSED, LEFT_1_PRESSED,
-			LEFT_2_PRESSED, RIGHT_1_PRESSED, RIGHT_2_PRESSED, SHARE_PRESSED, OPTION_PRESSED, LEFT_HAT_PRESSED, RIGHT_HAT_PRESSED, LEFT_HAT_X,
-			LEFT_HAT_Y, RIGHT_HAT_Y, RIGHT_HAT_X, LEFT_2, RIGHT_2
-		};
+
 		void run() override;
 		bool checkConnection();
 		void setColor(osg::Vec3 color);
 		void setVibration(const bool b) override;
+
+		virtual void handleEvent(const omega::Event& event);
 		// hid_device *_controller = NULL;
 		bool _controller = false; //dummy
 
@@ -33,11 +31,19 @@ namespace input
 		static void reset();
 
 	private:
-		int getValueFromKey(const PS4KEY type, unsigned char *buffer);
 
 		float m_deadzoneX, m_deadzoneY;
 
-		bool m_vibrate;
+		bool m_vibrate = false;
+		float m_leftAnalogLR = 0.0 ;
+		float m_leftAnalogUD = 0.0 ;
+		float m_rightAnalogLR = 0.0;
+		float m_rightAnalogUD = 0.0;
+		float m_L2 = 0.0;
+		float m_R2 = 0.0;
+
+		bool m_handbrakePressed = false;
+		bool m_turboPressed = false;
 	};
 }
 }

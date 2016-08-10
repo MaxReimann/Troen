@@ -144,8 +144,11 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 		break;
 	}
 }
+
 void BikeController::handleEvent(const omega::Event& evt)
 {
+
+
 
 	switch (m_inputDevice)
 	{
@@ -161,16 +164,13 @@ void BikeController::handleEvent(const omega::Event& evt)
 		break;
 #endif
 	case input::BikeInputState::GAMEPADVRPN:
-		// initializeGamepadVRPN(bikeInputState);
 		m_pollingThread->handleEvent(evt);
 		break;
 	case input::BikeInputState::AI:
 		m_pollingThread->handleEvent(evt);
-		// initializeAI(bikeInputState);
 		break;
 	case input::BikeInputState::REMOTE_PLAYER:
 		m_pollingThread->handleEvent(evt);
-		// initializeRemote(bikeInputState);
 		break;
 	default:
 		break;
