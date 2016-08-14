@@ -129,9 +129,9 @@ find_package(OpenGL REQUIRED)
 
 
 
-#set(OMEGA_BINARY_DIR /local/omegalib/build/bin )
-set(OmegaLib_SOURCE_DIR /da/sw/omegalib/omegalib.dev/)
-set(Omegalib_DIR /da/sw/omegalib/omegalib.dev/build)
+set(OMEGA_BINARY_DIR /local/omegalib/build/bin )
+set(OmegaLib_SOURCE_DIR /local/omegalib/)
+set(Omegalib_DIR /local/omegalib/build)
 find_package(Omegalib)
 
 # # OpenSceneGraph
@@ -176,9 +176,66 @@ set(CYCLOPS_INCLUDE "${OmegaLib_SOURCE_DIR}/modules/cyclops")
 add_definitions(-DOMEGALIB_BIN_DIR="${Omegalib_DIR}/bin")
 
 
+option(USE_PYTHON_AI "True uses the python ai script, false uses the JS script" OFF)
+
+if(USE_PYTHON_AI)
+  add_definitions(-DUSE_AIPY)
+endif()
+
+
+option(USE_BENDEDVIEWS "Use the closed source BendedView Items. Needs the BendedViews Folder next to source" OFF)
+
+if (USE_BENDEDVIEWS)
+  add_definitions(-DUSE_BENDEDVIEWS)
+endif()
+
+
 #################################################
 # SOURCES
 #################################################
+
+if (USE_BENDEDVIEWS)
+	set(extra_sources
+		BendedViews/src/DeformationRendering.cpp
+		BendedViews/src/DeformationRendering.h
+		BendedViews/src/GlobalDeformationsExample.cpp
+		BendedViews/src/GlobalDeformationsExample.h
+		BendedViews/src/PreRenderCallback.cpp
+		BendedViews/src/PreRenderCallback.h
+		BendedViews/src/SplineDeformationRendering.cpp
+		BendedViews/src/SplineDeformationRendering.h
+
+		BendedViews/src/deformentities/bsplinedeformationfunction.cpp
+		BendedViews/src/deformentities/bsplinedeformationfunction.h
+		BendedViews/src/deformentities/curve.cpp
+		BendedViews/src/deformentities/curve.h
+		BendedViews/src/deformentities/curvestylingpreset.cpp
+		BendedViews/src/deformentities/curvestylingpreset.h
+		BendedViews/src/deformentities/preset.cpp
+		BendedViews/src/deformentities/preset.h
+		BendedViews/src/deformentities/tagpoint.cpp
+		BendedViews/src/deformentities/tagpoint.h
+
+		##################################################
+		# Bended Views GUI
+		##################################################
+		BendedViews/src/ui/DeformationConfigWidget.ui
+		BendedViews/src/ui/DeformationConfigWidget.h
+		BendedViews/src/ui/DeformationConfigWidget.cpp
+		BendedViews/src/ui/ControlPointItem.h
+		BendedViews/src/ui/ControlPointItem.cpp
+		BendedViews/src/ui/SplineItem.h
+		BendedViews/src/ui/SplineItem.cpp
+		BendedViews/src/ui/SplineSceneItem.h
+		BendedViews/src/ui/SplineSceneItem.cpp
+	)
+else()
+	set(extra_sources "")
+endif()
+
+
+
+
 
 set(sources
 	source/main.cpp
@@ -217,8 +274,8 @@ set(sources
 	source/input/gamepadvrpn.cpp
 	source/input/bikeinputstate.h
 	source/input/bikeinputstate.cpp
-	#source/input/ai.h
-	#source/input/ai.cpp
+	source/input/ai.h
+	source/input/ai.cpp
 	source/input/aipy.h
 	source/input/aipy.cpp
 	source/input/pollingdevice.h
@@ -301,42 +358,11 @@ set(sources
 	source/input/remoteplayer.cpp
 	source/input/remoteplayer.h
 
-
-	BendedViews/src/DeformationRendering.cpp
-	BendedViews/src/DeformationRendering.h
-	BendedViews/src/GlobalDeformationsExample.cpp
-	BendedViews/src/GlobalDeformationsExample.h
-	BendedViews/src/PreRenderCallback.cpp
-	BendedViews/src/PreRenderCallback.h
-	BendedViews/src/SplineDeformationRendering.cpp
-	BendedViews/src/SplineDeformationRendering.h
-
-	BendedViews/src/deformentities/bsplinedeformationfunction.cpp
-	BendedViews/src/deformentities/bsplinedeformationfunction.h
-	BendedViews/src/deformentities/curve.cpp
-	BendedViews/src/deformentities/curve.h
-	BendedViews/src/deformentities/curvestylingpreset.cpp
-	BendedViews/src/deformentities/curvestylingpreset.h
-	BendedViews/src/deformentities/preset.cpp
-	BendedViews/src/deformentities/preset.h
-	BendedViews/src/deformentities/tagpoint.cpp
-	BendedViews/src/deformentities/tagpoint.h
-
-	##################################################
-	# Bended Views GUI
-	##################################################
-	BendedViews/src/ui/DeformationConfigWidget.ui
-	BendedViews/src/ui/DeformationConfigWidget.h
-	BendedViews/src/ui/DeformationConfigWidget.cpp
-	BendedViews/src/ui/ControlPointItem.h
-	BendedViews/src/ui/ControlPointItem.cpp
-	BendedViews/src/ui/SplineItem.h
-	BendedViews/src/ui/SplineItem.cpp
-	BendedViews/src/ui/SplineSceneItem.h
-	BendedViews/src/ui/SplineSceneItem.cpp
-
+	${extra_sources}
 )
 
+
+MESSAGE(STATUS ${sources})
 
 source_group_by_path("${CMAKE_CURRENT_SOURCE_DIR}/source"
 	"\\\\.h$|\\\\.hpp$|\\\\.cpp$|\\\\.c$|\\\\.ui$|\\\\.qrc$" "Source Files" ${sources})
@@ -352,7 +378,9 @@ add_executable(${target} ${sources})
 
 qt5_use_modules(${target} Core Gui Widgets)
 qt5_use_modules(${target} Core OpenGL Gui Widgets)
-qt5_wrap_ui(${target} BendedViews/src/ui/DeformationConfigWidget.ui)
+if (USE_BENDEDVIEWS)
+	qt5_wrap_ui(${target} BendedViews/src/ui/DeformationConfigWidget.ui)
+endif()
 
 include_directories(
 	${CMAKE_SOURCE_DIR}
@@ -485,10 +513,12 @@ install(
 	DESTINATION ${INSTALL_ROOT}
 	COMPONENT ${META_PROJECT_NAME})
 # bended views
-install(
-	DIRECTORY ${CMAKE_SOURCE_DIR}/BendedViews/shaders
-	DESTINATION ${INSTALL_ROOT}/BendedViews
-	COMPONENT ${META_PROJECT_NAME})
+if (USE_BENDEDVIEWS)
+	install(
+		DIRECTORY ${CMAKE_SOURCE_DIR}/BendedViews/shaders
+		DESTINATION ${INSTALL_ROOT}/BendedViews
+		COMPONENT ${META_PROJECT_NAME})
+endif()
 #scripts
 install(
 	DIRECTORY ${CMAKE_SOURCE_DIR}/scripts

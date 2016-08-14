@@ -12,7 +12,11 @@ std::vector<osg::ref_ptr<osg::Program> > shaders::m_allShaderPrograms;
 void shaders::reloadShaders()
 {
 	shaders::m_allShaderPrograms.resize(SHADER_NAME_COUNT);
-	std::string deformShader = "BendedViews/shaders/deform_ws_bowl.vert";
+	#ifdef USE_BENDEDVIEWS
+		std::string deformShader = "BendedViews/shaders/deform_ws_bowl.vert";
+	#else
+		std::string deformShader = "shaders/emptydeform.vert";
+	#endif
 
 	reloadShader(shaders::m_allShaderPrograms[DEFAULT], "shaders/default.frag", deformShader, "shaders/default.vert");
 	reloadShader(shaders::m_allShaderPrograms[BIKE], "shaders/bike.frag", deformShader, "shaders/bike.vert");

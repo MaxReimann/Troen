@@ -17,11 +17,17 @@ namespace troen
 		ItemController(btVector3 position, std::weak_ptr<PhysicsWorld> world, TroenGame* troenGame, LevelView* view);
 
 		osg::Vec3 getDimensions();
-
+#ifdef USE_BENDEDVIEWS
 		enum Type
 		{
 			TURBOSTRIP, HEALTHUP, RADAR, BENDEDVIEWS, COUNT
 		};
+#else
+		enum Type
+		{
+			TURBOSTRIP, HEALTHUP, RADAR, COUNT
+		};
+#endif
 
 		void triggerOn(BikeController* bikeController, GameLogic* gamelogic = NULL);
 

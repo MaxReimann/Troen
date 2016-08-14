@@ -20,7 +20,7 @@
 #include "../input/gamepad.h"
 #include "../input/gamepadvrpn.h"
 #include "../input/aipy.h"
-// #include "../input/ai.h"
+#include "../input/ai.h"
 #include "../input/pollingdevice.h"
 #include "../interpolate.h"
 
@@ -136,7 +136,11 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 		initializeGamepadVRPN(bikeInputState);
 		break;
 	case input::BikeInputState::AI:
+#ifdef USE_AIPY
+		initializeAIPy(bikeInputState);
+#else
 		initializeAI(bikeInputState);
+#endif
 		break;
 	case input::BikeInputState::REMOTE_PLAYER:
 		initializeRemote(bikeInputState);
@@ -254,12 +258,20 @@ void BikeController::initializeGamepadVRPN(osg::ref_ptr<input::BikeInputState> b
 	m_pollingThread->start();
 }
 
-void BikeController::initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState)
+void BikeController::initializeAIPy(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
 	input::AIPy* ai = new input::AIPy(bikeInputState, this);
 	m_pollingThread = ai;
 	m_pollingThread->start();
 }
+
+void BikeController::initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState)
+{
+	input::AI* ai = new input::AI(bikeInputState, this);
+	m_pollingThread = ai;
+	m_pollingThread->start();
+}
+
 
 void BikeController::initializeRemote(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {

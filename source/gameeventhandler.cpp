@@ -3,7 +3,10 @@
 #include "troengame.h"
 #include "gamelogic.h"
 #include "view/shaders.h"
-#include "BendedViews/src/SplineDeformationRendering.h"
+
+#ifdef USE_BENDEDVIEWS
+	#include "BendedViews/src/SplineDeformationRendering.h"
+#endif
 
 using namespace troen;
 
@@ -41,16 +44,20 @@ void GameEventHandler::attachGameLogic(std::shared_ptr<GameLogic>& gamelogic)
 	 else if (event.isKeyDown('r')){
 		std::cout << "Reloading shaders" << std::endl;
 		shaders::reloadShaders();
-		m_troenGame->getBendedViews()->reloadShaders(); 
+		#ifdef USE_BENDEDVIEWS
+			m_troenGame->getBendedViews()->reloadShaders(); 
+		#endif
 	 }
 	 else if (event.isKeyDown(omega::KC_SHIFT_R) || event.isKeyDown(omega::KC_SHIFT_L)) {
 		 m_troenGame->pauseEvent();
 	 }
 	 else if (event.isKeyDown(127 /*delete*/)){	 m_gameLogic.lock()->restartLevel(); }
+#ifdef USE_BENDEDVIEWS
 	 else if (event.isKeyDown('1')){	m_troenGame->getBendedViews()->setPreset(0); }
 	 else if (event.isKeyDown('2')){	m_troenGame->getBendedViews()->setPreset(1); }
 	 else if (event.isKeyDown('3')){	m_troenGame->getBendedViews()->setPreset(2); }
 	 else if (event.isKeyDown('4')){	m_troenGame->getBendedViews()->setPreset(3); }
+#endif
 	 else if (event.isKeyDown(omega::KC_TAB)){	m_troenGame->toggleHUDVisibility(); }
 	 else {return false;}
 

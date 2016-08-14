@@ -103,6 +103,7 @@ namespace troen
 		void initializeArrows(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeGamepadVRPN(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState);
+		void initializeAIPy(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeRemote(osg::ref_ptr<input::BikeInputState> bikeInputState);
 

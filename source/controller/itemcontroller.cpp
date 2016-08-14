@@ -60,10 +60,10 @@ void ItemController::triggerOn(BikeController* bikeController, GameLogic* gamelo
 		remove();
 		return;
 		break;
+#ifdef USE_BENDEDVIEWS
 	case troen::ItemController::BENDEDVIEWS:
 		if (bikeController->player()->hasGameView())
 		{
-
 			m_troenGame->enableBendedViews();
 			QTimer::singleShot(TIME_TO_ACTIVATE_BENDED_VIEWS * 3, this, SLOT(deactivateBendedViews()));
 		remove();
@@ -71,6 +71,7 @@ void ItemController::triggerOn(BikeController* bikeController, GameLogic* gamelo
 		}
 		remove();
 		break;
+#endif
 	default:
 		remove();
 		break;
@@ -107,6 +108,8 @@ void ItemController::hideFencesInRadarForPlayer()
 
 void ItemController::deactivateBendedViews()
 {
-	m_troenGame->disableBendedViews();
+	#ifdef USE_BENDEDVIEWS
+		m_troenGame->disableBendedViews();
+	#endif
 	destroy();
 }

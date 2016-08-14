@@ -107,7 +107,9 @@ namespace troen
 	class ManipulatorController;
 	class Reflection;
 	class ResourcePool;
+#ifdef USE_BENDEDVIEWS
 	class SplineDeformationRendering;
+#endif
 
 
 	namespace util

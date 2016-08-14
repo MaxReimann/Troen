@@ -23,7 +23,9 @@
 #include "view/shaders.h"
 #include "view/postprocessing.h"
 #include "view/reflection.h"
+#ifdef USE_BENDEDVIEWS
 #include "BendedViews/src/SplineDeformationRendering.h"
+#endif
 
 #include "util/chronotimer.h"
 #include "util/gldebugdrawer.h"
@@ -223,7 +225,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	// }
 	// radarScene->addChild(t->m_levelController->getViewNode());
 
-
+#ifdef USE_BENDEDVIEWS
  	const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
  	// todo: the magic number (0.25) can be used to control the length of the deformation and must be possibly adjusted after the scene graph tweaks
  	float radius = LEVEL_SIZE / 5;
@@ -233,6 +235,7 @@ bool TroenGameBuilder::composeSceneGraph()
  	t->m_deformationRendering = new SplineDeformationRendering(t->m_sceneNode);
  	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
  	t->m_deformationRendering->setPreset(4);
+#endif
 
  	//TODO: comment back in
 	// for (auto player : t->m_playersWithView)

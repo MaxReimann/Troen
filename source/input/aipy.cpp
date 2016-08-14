@@ -16,6 +16,8 @@
 #include <omegaToolkit.h>
 #include <omegaOsg/omegaOsg.h>
 
+// #include <boost/python.hpp>
+
 #include "../controller/bikecontroller.h"
 
 using namespace troen::input;
@@ -55,10 +57,10 @@ void AIPy::run()
 
 	m_pollingEnabled = true;
 
-  	namespace python = boost::python;
-  	python::object main = python::import("__main__");
-  	python::object main_namespace = main.attr("__dict__");
 
+	omega::PythonInterpreter* interp = omega::SystemManager::instance()->getScriptInterpreter();
+	// queue command and only execue on master
+	
   	QFile scriptFile("scripts/ai.py");
 
   	if (!scriptFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -67,14 +69,12 @@ void AIPy::run()
 	    return;
 	}
 
+
+	interp->queueCommand("import AI", false);
+
 	QTextStream inScript(&scriptFile);
 	QString scriptString = inScript.readAll();
 
-	//Put the function name runPyProg in the main_namespace
-	python::exec( scriptString.toStdString().c_str()  , main_namespace);
-
-	// Now call the python function runPyProg with an argument
-	python::object runPyProg = main.attr("runPyProg");
 		
 	while (m_pollingEnabled)
 	{
@@ -82,7 +82,7 @@ void AIPy::run()
 
 		// reflectionzeug::Variant value;
 		// value = g_scriptingThread.evaluate("try {     if (typeof move !== 'undefined') { move() } else { player.angle = 0 }      } catch (ex) { ex } ");
-		runPyProg("print(\"moinsendicker\")");
+		interp->queueCommand(scriptString.toStdString().c_str(), false);
 
 		
 		m_bikeInputState->setAcceleration(getAcceleration());

@@ -120,7 +120,7 @@ namespace troen
         void registerSharedListener(SharedDataListener* listener);
         void registerRenderPassListener(RenderPassListener* listener);
 
-
+#ifdef USE_BENDEDVIEWS
 
 		SplineDeformationRendering* getBendedViews() {
 			return m_deformationRendering;
@@ -129,6 +129,7 @@ namespace troen
 		void enableBendedViews() { m_deformationEnd = BENDED_VIEWS_ACTIVATED; }
 		void disableBendedViews() { m_deformationEnd = BENDED_VIEWS_DEACTIVATED; }
 		
+#endif
 		double m_deformationEnd;
 
 		void toggleHUDVisibility();
@@ -207,7 +208,9 @@ namespace troen
 		ResourcePool m_resourcePool;
 
 		// BendedViews
+#ifdef USE_BENDEDVIEWS
 		SplineDeformationRendering* m_deformationRendering;
+#endif
 
 	};
 }

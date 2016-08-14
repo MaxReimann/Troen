@@ -23,7 +23,10 @@
 
 #include "model/physicsworld.h"
 
-#include "BendedViews/src/SplineDeformationRendering.h"
+#ifdef USE_BENDEDVIEWS
+	#include "BendedViews/src/SplineDeformationRendering.h"
+#endif
+
 #include "view/postprocessing.h"
 #include "view/reflection.h"
 
@@ -251,6 +254,7 @@ void TroenGame::fixCulling(osg::ref_ptr<osgViewer::View> view)
 
 void TroenGame::handleBending(double interpolationSkalar)
 {
+#ifdef USE_BENDEDVIEWS
 	m_deformationRendering->setInterpolationSkalar(1.0);
 
 	double currentBending = m_deformationRendering->getDeformationEnd();
@@ -288,6 +292,8 @@ void TroenGame::handleBending(double interpolationSkalar)
 
 	m_deformationRendering->setDeformationStartEnd(0.05, currentBending);
 	m_levelController->setBendingFactor(1.0 - currentBending / BENDED_VIEWS_DEACTIVATED);
+
+#endif
 	
 
 }
