@@ -6,9 +6,11 @@
 #include "../forwarddeclarations.h"
 #include "itemcontroller.h"
 
+#include "../omegascene.h"
+
 namespace troen
 {
-	class LevelController : public AbstractController
+	class LevelController : public AbstractController, public SharedDataListener
 	{
 	public:
 		LevelController(TroenGame* troenGame, std::string levelName);
@@ -27,6 +29,9 @@ namespace troen
 		void removeRigidBodiesFromWorld();
 		void reload();
 
+		void commitSharedData(omega::SharedOStream& out);
+        void updateSharedData(omega::SharedIStream& in);
+
 	private:
 		std::shared_ptr<LevelView> m_levelView;
 		std::shared_ptr<LevelModel> m_levelModel;
@@ -38,5 +43,10 @@ namespace troen
 		std::string m_levelName;
 		int m_currentItemCount;
 		int m_targetItemCount;
+
+
+		bool m_newitemBox;
+		btVector3 m_positionCached;
+		ItemController::Type m_itemTypeCached;
 	};
 }

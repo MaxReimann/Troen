@@ -67,5 +67,6 @@ namespace troen
 		bool m_masterNode;
 		bool m_start;
 		bool m_fenceCleared;
+		int m_maxFencePartsCached;
 	};
 }

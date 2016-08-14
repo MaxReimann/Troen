@@ -26,6 +26,7 @@ m_fenceController(fenceController), m_masterNode(false)
 	initializeShader();
 	m_start = false;
 	m_fenceCleared = false;
+	m_maxFencePartsCached = 0;
 }
 
 void FenceView::initializeFence()
@@ -189,23 +190,24 @@ void FenceView::removeAllFences()
 
 void FenceView::enforceFencePartsLimit()
 {
-	int maxFenceParts = m_fenceController->getFenceLimit();
+	if (omega::SystemManager::instance()->isMaster())
+	 	m_maxFencePartsCached = m_fenceController->getFenceLimit();
 
 	// the quad strip contains two more vertices for the beginning of the fence
 	int currentFenceParts = (m_coordinates->size() - 2) / 2;
 
-	if (maxFenceParts != 0 && currentFenceParts > maxFenceParts)
+	if (m_maxFencePartsCached != 0 && currentFenceParts > m_maxFencePartsCached)
 	{
-		for (int i = 0; i < (currentFenceParts - maxFenceParts); i++)
+		for (int i = 0; i < (currentFenceParts - m_maxFencePartsCached); i++)
 		{
 			m_coordinates->erase(m_coordinates->begin(), m_coordinates->begin() + 2);
 			m_relativeHeights->erase(m_relativeHeights->begin(), m_relativeHeights->begin() + 2);
 		}
 	}
 	// radar fence boxes
-	if (maxFenceParts != 0 && m_radarFenceBoxes.size() > maxFenceParts / FENCE_TO_MINIMAP_PARTS_RATIO)
+	if (m_maxFencePartsCached != 0 && m_radarFenceBoxes.size() > m_maxFencePartsCached / FENCE_TO_MINIMAP_PARTS_RATIO)
 	{
-		for (int i = 0; i < (m_radarFenceBoxes.size() - maxFenceParts / FENCE_TO_MINIMAP_PARTS_RATIO); i++)
+		for (int i = 0; i < (m_radarFenceBoxes.size() - m_maxFencePartsCached / FENCE_TO_MINIMAP_PARTS_RATIO); i++)
 		{
 			m_radarElementsGroup->removeChild(m_radarFenceBoxes.front());
 			m_radarFenceBoxes.pop_front();
@@ -240,7 +242,7 @@ void FenceView::setBendingActive(bool val)
 void FenceView::commitSharedData(omega::SharedOStream& out)
 {
 	// std::cout << "comitting shared data" << std::endl;
-	out << m_fenceUpdated << m_lastPositionCached << m_currentPositionCached << m_fenceCleared;
+	out << m_fenceUpdated << m_lastPositionCached << m_currentPositionCached << m_fenceCleared << m_maxFencePartsCached;
 
 	// clear per frame states
 	m_fenceUpdated = false;
@@ -252,7 +254,8 @@ void FenceView::commitSharedData(omega::SharedOStream& out)
 void FenceView::updateSharedData(omega::SharedIStream& in)
 {
 	// std::cout << "updating shared data" << std::endl;
-	in >> m_fenceUpdated >> m_lastPositionCached >> m_currentPositionCached >> m_fenceCleared;
+	in >> m_fenceUpdated >> m_lastPositionCached >> m_currentPositionCached >> m_fenceCleared >> m_maxFencePartsCached;
+	
 	if (m_fenceCleared)
 		removeAllFences();
 
