@@ -48,7 +48,7 @@ void main(void)
 	vec3 reddedColor = vec3(1.0,0.0,0.0);
 
 
-	vec4 newColor = sceneColor + pongColor;
+	vec4 newColor = pongColor; //TODO:comment back in
 	newColor = mix(newColor, vec4(reddedColor, 1.f), circleTransparency);
 
 	gl_FragColor =newFrameWeight * newColor + oldFrameWeight * oldColor;//texture2D(idLayer, st);//

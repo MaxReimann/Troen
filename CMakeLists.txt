@@ -217,8 +217,10 @@ set(sources
 	source/input/gamepadvrpn.cpp
 	source/input/bikeinputstate.h
 	source/input/bikeinputstate.cpp
-	source/input/ai.h
-	source/input/ai.cpp
+	#source/input/ai.h
+	#source/input/ai.cpp
+	source/input/aipy.h
+	source/input/aipy.cpp
 	source/input/pollingdevice.h
 	source/input/pollingdevice.cpp
 

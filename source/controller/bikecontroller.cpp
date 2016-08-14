@@ -19,7 +19,8 @@
 #include "../input/keyboard.h"
 #include "../input/gamepad.h"
 #include "../input/gamepadvrpn.h"
-#include "../input/ai.h"
+#include "../input/aipy.h"
+// #include "../input/ai.h"
 #include "../input/pollingdevice.h"
 #include "../interpolate.h"
 
@@ -255,7 +256,7 @@ void BikeController::initializeGamepadVRPN(osg::ref_ptr<input::BikeInputState> b
 
 void BikeController::initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
-	input::AI* ai = new input::AI(bikeInputState, this);
+	input::AIPy* ai = new input::AIPy(bikeInputState, this);
 	m_pollingThread = ai;
 	m_pollingThread->start();
 }
