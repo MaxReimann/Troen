@@ -71,6 +71,6 @@ void main() {
 		incrementalGaussian.xy *= incrementalGaussian.yz;
 	}
 
-	gl_FragColor = avgValue / coefficientSum;
+	gl_FragColor = vec4(1,0,1,1);// texture2D(idLayer, v_texCoord.xy);// avgValue / coefficientSum;; 
 	return;
 }

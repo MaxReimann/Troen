@@ -28,27 +28,30 @@ using namespace troen;
 class CUpdateCameraCallback : public osg::NodeCallback
 {
 public:	
-	CUpdateCameraCallback() : NodeCallback(){}
+	CUpdateCameraCallback(std::string name) : NodeCallback(), m_name(name) {}
 
 	void operator()(osg::Node *node, osg::NodeVisitor *nv)
 	{
 		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
 		{
-			osg::Camera	*camera = dynamic_cast<osg::Camera *>(node->asGroup()->getChild(0));
+			osg::Camera	*camera = dynamic_cast<osg::Camera *>(node);
 			osgUtil::CullVisitor* cv = static_cast<osgUtil::CullVisitor*>(nv);
 
 			if (camera != NULL)
-			{
-				camera->setProjectionMatrix(cv->getCurrentCamera()->getProjectionMatrix() );
-				camera->setViewMatrix(cv->getCurrentCamera()->getViewMatrix());
-				// g_cameraEyeU->set(cv->getEyePoint());
+			{	
+				std::cout << "camera callback: " << m_name << std::endl;
 			}
 
 		}
 		this->traverse(node, nv);
 	}
 
+protected:
+	std::string m_name;
+
 };
+
+
 
 
 PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int height)
@@ -70,7 +73,9 @@ PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int
 	// 1. gBuffer pass: render color, normal & depth, id buffer
 	unsigned int pass = 0;
 	m_allCameras.push_back(gBufferPass()); 
-	m_root->addChild(m_allCameras[pass++]);
+	auto cgbuffCamGroup = new osg::Group();
+	cgbuffCamGroup->addChild( m_allCameras[pass++] );
+	m_root->addChild(cgbuffCamGroup);
 
 	// auto cameraGroupCallback = new CUpdateCameraCallback();
 	// m_root->setCullCallback(cameraGroupCallback);
@@ -79,17 +84,25 @@ PostProcessing::PostProcessing(osg::ref_ptr<osg::Group> rootNode, int width, int
 	//TEXTURE_CONTENT pingPong[] = { PING, PONG };
 	// start writing into PONG buffer (pass == 1 )
 
-	m_allCameras.push_back(pingPongPass(pass, COLOR, PONG, shaders::SELECT_GLOW_OBJECTS, -1.0));
-	m_root->addChild(m_allCameras[pass++]);
+	// m_allCameras.push_back(pingPongPass(pass, COLOR, PONG, shaders::SELECT_GLOW_OBJECTS, -1.0));
+	// auto glowSelectGroup = new osg::Group();
+	// glowSelectGroup->addChild( m_allCameras[pass++] );
+	// m_root->addChild(glowSelectGroup);
 	
-	m_allCameras.push_back(pingPongPass(pass, PONG, PING, shaders::HBLUR, -1.0));
-	m_root->addChild(m_allCameras[pass++]);
+	// m_allCameras.push_back(pingPongPass(pass, PONG, PING, shaders::HBLUR, -1.0));
+	// auto hBlurGroup = new osg::Group();
+	// hBlurGroup->addChild( m_allCameras[pass++] );
+	// m_root->addChild(hBlurGroup);
 		
-	m_allCameras.push_back(pingPongPass(pass, PING, PONG, shaders::VBLUR, -1.0));
-	m_root->addChild(m_allCameras[pass++]);
+	// m_allCameras.push_back(pingPongPass(pass, PING, PONG, shaders::VBLUR, -1.0));
+	// auto vBlurGroup = new osg::Group();
+	// vBlurGroup->addChild( m_allCameras[pass++] );
+	// m_root->addChild(vBlurGroup);
 
 	m_allCameras.push_back(postProcessingPass(pass));
-	m_root->addChild(m_allCameras[m_allCameras.size() - 1]);
+	auto postProcGroup = new osg::Group();
+	postProcGroup->addChild( m_allCameras[pass++] );
+	m_root->addChild(postProcGroup);
 }
 
 // sets up textures
@@ -112,13 +125,17 @@ void PostProcessing::setupTextures(const unsigned int & width, const unsigned in
 			m_fboTextures[i] = new osg::Texture2D();
 		}
 				
-		if ((i == PING || i == PONG)) {
-			m_fboTextures[i]->setTextureWidth(halfedWidth);
-			m_fboTextures[i]->setTextureHeight(halfedHeight);
-		} else {
-			m_fboTextures[i]->setTextureWidth(width);
+		// if ((i == PING || i == PONG)) {
+		// // if (i == PONG) {
+		// 	//TODO: USe halfed width again
+		// 	m_fboTextures[i]->setTextureWidth(width);
+		// 	m_fboTextures[i]->setTextureHeight(height);
+		// } else {
+		// 	m_fboTextures[i]->setTextureWidth(width);
+		// 	m_fboTextures[i]->setTextureHeight(height);
+		// }
+					m_fboTextures[i]->setTextureWidth(width);
 			m_fboTextures[i]->setTextureHeight(height);
-		}
 
 		// higher resolution
 		if (i == ID)
@@ -146,17 +163,18 @@ void PostProcessing::setupTextures(const unsigned int & width, const unsigned in
 		m_fboTextures[i]->dirtyTextureObject();
 	}
 
-	// important to reflect the change in size for the FBO
-	if (m_allCameras.size() > 0)
-	{
-		for (size_t i = 0, iEnd = m_allCameras.size(); i < iEnd; i++)
-		{
-			m_allCameras[i]->setRenderingCache(0);
-			if (i != 0 && i != iEnd - 1)
-				// only draw with halfed resolution, if we process the gbuffer + postprocessing pass
-				m_allCameras[i]->setViewport(new osg::Viewport(0, 0, halfedWidth, halfedHeight));
-		}
-	}
+//TODO: comment back in ?
+	// // important to reflect the change in size for the FBO
+	// if (m_allCameras.size() > 0)
+	// {
+	// 	for (size_t i = 0, iEnd = m_allCameras.size(); i < iEnd; i++)
+	// 	{
+	// 		m_allCameras[i]->setRenderingCache(0);
+	// 		if (i != 0 && i != iEnd - 1)
+	// 			// only draw with halfed resolution, if we process the gbuffer + postprocessing pass
+	// 			m_allCameras[i]->setViewport(new osg::Viewport(0, 0, halfedWidth, halfedHeight));
+	// 	}
+	// }
 }
 
 
@@ -172,21 +190,26 @@ osg::ref_ptr<osg::Camera> PostProcessing::gBufferPass()
 {
 
 	osg::ref_ptr<osg::Camera> cam = new osg::Camera();
+	cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 	// output textures
 	cam->attach((osg::Camera::BufferComponent)(osg::Camera::COLOR_BUFFER0 + COLOR), m_fboTextures[COLOR]);
 	cam->attach((osg::Camera::BufferComponent)(osg::Camera::COLOR_BUFFER0 + ID), m_fboTextures[ID]);
-	cam->setRenderOrder( osg::Camera::PRE_RENDER );
+	// cam->setRenderOrder( osg::Camera::PRE_RENDER, -1 );
 
 	// Configure fboCamera to draw fullscreen textured quad
 	// black clear color
-	cam->setClearColor(osg::Vec4(0.0, 0.0, 0.5, 1.0));
-	cam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+	cam->setClearMask(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	cam->setClearColor(osg::Vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	cam->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+	// m_reflectionCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+	cam->setClearDepth(1.0);
 
-	cam->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
+	cam->setReferenceFrame(osg::Camera::RELATIVE_RF);
 	cam->addChild(m_sceneNode);
 
 
-
+	osg::ref_ptr<osg::StateSet>	state = cam->getOrCreateStateSet();
+	state->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::GBUFFER], osg::StateAttribute::ON);
 
 
 	return cam;
@@ -197,15 +220,23 @@ osg::ref_ptr<osg::Camera> PostProcessing::pingPongPass(int order, TEXTURE_CONTEN
 {
 	osg::ref_ptr<osg::Camera> camera(new osg::Camera());
 
+	// test
+	// char * names[] = {"gbuffer", "id select", "hblur" , "vblur"};
+	// auto cameraCallback = new CUpdateCameraCallback(names[order]);
+	// camera->setCullCallback(cameraCallback);
+
 	// output textures	
+	//TODO:comment back in
 	camera->attach((osg::Camera::BufferComponent) (osg::Camera::COLOR_BUFFER0), m_fboTextures[outputTexture]);
 
 	// Configure fboCamera to draw fullscreen textured quad
-	camera->setClearColor(osg::Vec4(0.0, float(float(order) / float(m_allCameras.size())), 0.0, 1.0));
-	camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+	// camera->setClearColor(osg::Vec4(0.0, float(float(order) / float(m_allCameras.size())), 0.0, 1.0));
+	//TODO: comment back in
+	// camera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+	camera->setClearColor(osg::Vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
 	camera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
-	camera->setRenderOrder(osg::Camera::POST_RENDER, order);
+	camera->setRenderOrder(osg::Camera::PRE_RENDER, order);
 
 	// geometry
 	osg::Geode* geode(new osg::Geode());
@@ -237,7 +268,7 @@ osg::ref_ptr<osg::Camera> PostProcessing::pingPongPass(int order, TEXTURE_CONTEN
 	state->setTextureAttributeAndModes(inputTexture, m_fboTextures[inputTexture], osg::StateAttribute::ON);
 	state->setTextureAttributeAndModes(ID, m_fboTextures[ID], osg::StateAttribute::ON);
 
-	return camera.release();
+	return camera;
 }
 
 void PostProcessing::setBeat(float beat)
@@ -250,13 +281,16 @@ osg::ref_ptr<osg::Camera> PostProcessing::postProcessingPass(int pass)
 {
 	osg::ref_ptr<osg::Camera> postRenderCamera(new osg::Camera());
 
+	// auto cameraCallback = new CUpdateCameraCallback("post");
+	// postRenderCamera->setCullCallback(cameraCallback);
+
 	// input textures
 	postRenderCamera->attach((osg::Camera::BufferComponent) (osg::Camera::COLOR_BUFFER0 + OLDCOLOR), m_fboTextures[OLDCOLOR]);
 
 	// configure postRenderCamera to draw fullscreen textured quad
-	postRenderCamera->setClearColor(osg::Vec4(0.0, 0.5, 0.0, 1)); // should never see this.
+	postRenderCamera->setClearColor(osg::Vec4(0.5, 0.5, 0.5, 1)); // should never see this.
 	postRenderCamera->setReferenceFrame(osg::Camera::ABSOLUTE_RF);
-	postRenderCamera->setRenderOrder(osg::Camera::POST_RENDER, pass);
+	postRenderCamera->setRenderOrder(osg::Camera::POST_RENDER,2);
 
 	// geometry
 	osg::Geode* geode(new osg::Geode());
@@ -274,14 +308,17 @@ osg::ref_ptr<osg::Camera> PostProcessing::postProcessingPass(int pass)
 	state->addUniform(new osg::Uniform("sceneLayer", COLOR));
 	//state->addUniform(new osg::Uniform("normalDepthLayer", NORMALDEPTH));
 	state->addUniform(new osg::Uniform("idLayer", ID));
-	state->addUniform(new osg::Uniform("pongLayer", PONG));
+	// state->addUniform(new osg::Uniform("pongLayer", PONG));
 	state->addUniform(new osg::Uniform("oldLayer", OLDCOLOR));
 
 	state->setTextureAttributeAndModes(COLOR, m_fboTextures[COLOR], osg::StateAttribute::ON);
-	//state->setTextureAttributeAndModes(NORMALDEPTH, m_fboTextures[NORMALDEPTH], osg::StateAttribute::ON);
+	// state->setTextureAttributeAndModes(NORMALDEPTH, m_fboTextures[NORMALDEPTH], osg::StateAttribute::ON);
 	state->setTextureAttributeAndModes(ID, m_fboTextures[ID], osg::StateAttribute::ON);
-	state->setTextureAttributeAndModes(PONG, m_fboTextures[PONG], osg::StateAttribute::ON);
+	// state->setTextureAttributeAndModes(PONG, m_fboTextures[PONG], osg::StateAttribute::ON);
 	state->setTextureAttributeAndModes(OLDCOLOR, m_fboTextures[OLDCOLOR], osg::StateAttribute::ON);
+
+	m_timeSinceLastBeat = new osg::Uniform("timeSinceLastBeat", 0.5f);
+	state->addUniform(m_timeSinceLastBeat);
 
 	osg::Uniform* timeU = new osg::Uniform("time", 0.f);
 	state->addUniform(timeU);

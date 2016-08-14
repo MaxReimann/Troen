@@ -17,5 +17,5 @@ void main() {
 
 	/*MR: for some very akward reason, the last parameter has to be set to 1 here (although the texture is only GL_RGB..), to render the ramps
 	and blocks into the idlayer, while it does not affect other objects like the itemboxes which also use default.frag..*/
-	gl_FragData[1] = vec4(modelID, glowIntensity, 0,1);
+	gl_FragData[1] = vec4(1, 0.3, 0,1);
 }

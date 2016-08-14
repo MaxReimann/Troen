@@ -114,7 +114,7 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 
 
 	m_reflectionCamera->setClearMask(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	m_reflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+	m_reflectionCamera->setRenderOrder(osg::Camera::PRE_RENDER, -2);
 	m_reflectionCamera->setClearColor(osg::Vec4(0.0f, 0.f, 0.0f, 0.0f));
 	m_reflectionCamera->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 	m_reflectionCamera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);

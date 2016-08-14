@@ -44,6 +44,20 @@ public:
 		m_scriptContext = scriptContext;
 		m_watchedFilePath = filePath;
 		onFolderChanged("");
+
+
+	  	QFile scriptFile(filePath);
+
+	  	if (!scriptFile.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			std::cout << "[ScriptWatcher] could not read " << filePath.toStdString() << std::endl;
+		    return;
+		}
+
+		scriptFile.close();
+
+
+
 	};
 
 private:
@@ -66,6 +80,8 @@ private:
 				m_scriptContext->evaluate(content.toStdString());
 
 				f.close();
+			} else {
+				std::cout << "[ScriptWatcher onFolderChanged] could not open " << str.toStdString() << std::endl;
 			}
 
 			// }

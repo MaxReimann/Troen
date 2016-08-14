@@ -227,6 +227,7 @@ void TroenGame::stepGameOmega()
 		// if (sleepTime > 0)	// sanity check, sleep until nextTime
 		// if (!m_gameConfig->testPerformance) m_gameThread->msleep(sleepTime);
 	}
+
 }
 
 
