@@ -23,7 +23,7 @@ Trailer
 
 ##Project Setup
 Please file an issue, if you have trouble building the game. 
-Download the game data (levels, models,..) from [here](https://www.dropbox.com/sh/ikhbxr1imfdfgvl/AABhB2SlDhMC30u6WPel7t-_a?dl=0) to the data folder, the password is DataArena.
+Download the game data (levels, models,..) from [here](https://www.dropbox.com/sh/ffuu2s6asycuxrs/AABV2lCdiHjjA-EBLi6MJlQAa?dl=0) to the data folder.
 
 Find the setup instructions below. 
 For your convenience, you can download prebuilt binaries of the 3rdParty libraries from [insert link](https://www.dropbox.com/s/o12a9oog7xy85x2/3rdParty.zip?dl=0), which are built for linux-x64 (gentoo).
