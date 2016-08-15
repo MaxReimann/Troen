@@ -6,6 +6,9 @@ featuring polished graphics, customizable maps, powerups, scriptable AI, multipl
 
  **Download** the game, see more previews and view the documentation at http://gameprogramming.hpi3d.de/201314/troen/
 
+
+ The **DataArena** branch integrates with omegalib for distributed rendering in the Data Arena. Find build instructions below.
+
 Trailer
 =======
 
@@ -19,38 +22,32 @@ Trailer
 
 
 ##Project Setup
-The binaries can be downloaded at http://gameprogramming.hpi3d.de/201314/troen/, if you plan on building the game yourself here are the required steps. 
-Please file an issue, if you have trouble building the game (or want to get access to prebuilt libraries).
+Please file an issue, if you have trouble building the game. 
+Download the game data (levels, models,..) from [here](https://www.dropbox.com/sh/ikhbxr1imfdfgvl/AABhB2SlDhMC30u6WPel7t-_a?dl=0) to the data folder, the password is DataArena.
+
+Find the setup instructions below. 
+For your convenience, you can download prebuilt binaries of the 3rdParty libraries from [insert link](https://www.dropbox.com/s/o12a9oog7xy85x2/3rdParty.zip?dl=0), which are built for linux-x64 (gentoo).
+
 
 Contributions are always welcome!
 
 
-Set up OSG:
-- Copy the compiled OpenSceneGraph folder to C:\Program Files\ and create a System Variable "OSG_DIR" with the value: C:\Program Files\OpenSceneGraph
-- add %OSG_DIR%\lib; %OSG_DIR%\bin to your PATH variable
-
 Set up FMOD:
 - Download fmod and copy to %ProjectDir%\3rdParty\fmod
-- add the environment variable FMOD_DIR to this directory
-- add %FMOD_DIR%\fmoddesignerapi\api; %FMOD_DIR%\api; to your PATH
+- use version 
 
-Set up BULLET_PHYSICS:
-- Download and copy bullet 2.8  to %ProjectDir%\3rdParty\BULLET_PHYSICS, dont use bullet3 as its uncompatible with the game
-- no setting of any evironment variable or PATH variable necessary
+Set up libzeug
+- Download and build [libzeug](https://github.com/cginternals/libzeug) in %ProjectDir%\3rdParty\
+- You can use the newest version from the master
 
-Set up HIDAPI
-- Download and build hidapi https://github.com/signal11/hidapi, copy to
-%ProjectDir%\3rdParty\
-- add %ProjectDir%\3rdParty\hidapi to your PATH
+Set up RakNet
+- Download and build [Raknet](https://github.com/OculusVR/RakNet) in %ProjectDir%\3rdParty\
+- You can use the newest version from the master
 
-Set up V8 & Scriptzeug
-- Download v8 (bin/include/lib) folder  to 
-%ProjectDir%\3rdParty\
-- Download and build scriptzeug https://github.com/hpicgs/libzeug, copy to %ProjectDir%\3rdParty\
-- create the environment variable %V8_ROOT% and set it to %ProjectDir%\3rdParty\v8
-- add the following to your path:
-- %V8_ROOT%\bin
-- %ProjectDir%\3rdParty\scriptzeug\lib
+Edit the CMakeLists.txt to point OMEGA_BINARY_DIR, OmegaLib_SOURCE_DIR and Omegalib_DIR to your omegalib directories.
 
-Set up correct Working Directory:
-- in MSVC goto DEBUG->properties->ConfigurationProperties->Debugging and set WorkingDirectory to ".." (without the quotes)
+Then cmake configure, generate and build.
+
+
+Start Troen from the build directory with:
+./startTroen.sh   --> Edit this script to make sure all library paths are pointing to the correct directories
