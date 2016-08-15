@@ -23,10 +23,10 @@ Trailer
 
 ##Project Setup
 Please file an issue, if you have trouble building the game. 
-Download the game data (levels, models,..) from [here](https://www.dropbox.com/sh/ffuu2s6asycuxrs/AABV2lCdiHjjA-EBLi6MJlQAa?dl=0) to the data folder.
+Download the game data (levels, models,..) from [**here**](https://www.dropbox.com/sh/ffuu2s6asycuxrs/AABV2lCdiHjjA-EBLi6MJlQAa?dl=0) to the data folder.
 
 Find the setup instructions below. 
-For your convenience, you can download prebuilt binaries of the 3rdParty libraries from [insert link](https://www.dropbox.com/s/o12a9oog7xy85x2/3rdParty.zip?dl=0), which are built for linux-x64 (gentoo).
+For your convenience, you can download prebuilt binaries of the 3rdParty libraries from [**here**](https://www.dropbox.com/s/o12a9oog7xy85x2/3rdParty.zip?dl=0), which are built for linux-x64 (gentoo).
 
 
 Contributions are always welcome!
@@ -34,14 +34,15 @@ Contributions are always welcome!
 
 Set up FMOD:
 - Download fmod and copy to %ProjectDir%\3rdParty\fmod
-- use version 
+- Use a version of the fmoddesignerapi from 2013 (might be hard to find)
+- Easiest option is to download the prebuilt binaries (see above) and copy fmod from there
 
 Set up libzeug
-- Download and build [libzeug](https://github.com/cginternals/libzeug) in %ProjectDir%\3rdParty\
+- Download and build [**libzeug**](https://github.com/cginternals/libzeug) in %ProjectDir%\3rdParty\
 - You can use the newest version from the master
 
 Set up RakNet
-- Download and build [Raknet](https://github.com/OculusVR/RakNet) in %ProjectDir%\3rdParty\
+- Download and build [**Raknet**](https://github.com/OculusVR/RakNet) in %ProjectDir%\3rdParty\
 - You can use the newest version from the master
 
 Edit the CMakeLists.txt to point OMEGA_BINARY_DIR, OmegaLib_SOURCE_DIR and Omegalib_DIR to your omegalib directories.
